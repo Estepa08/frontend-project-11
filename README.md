@@ -3,7 +3,4 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Estepa08_frontend-project-11&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Estepa08_frontend-project-11)
 
 
-[![Vercel](https://img.shields.io/badge/Деплой-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://frontend-project-11.vercel.app)
-
-
 [![RSS App](https://img.shields.io/badge/RSS%20Aggregator-Online-blue?style=flat-square)](https://frontend-project-11.vercel.app)
