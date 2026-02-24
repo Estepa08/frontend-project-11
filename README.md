@@ -6,3 +6,6 @@
 
 [![Vercel](https://img.shields.io/badge/Посмотреть%20сайт-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://frontend-project-11.vercel.app)
 
+## 📱 Ссылка на сайт
+
+[![Deploy](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)](https://frontend-project-11.vercel.app)
