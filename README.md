@@ -4,13 +4,18 @@
 
 
 
-## 🎯 Демонстрация
+## 📱 Посмотреть в действии
 
 <div align="center">
-  <h3>
-    <a href="https://frontend-project-11.vercel.app">
-      🚀 Перейти к приложению
-    </a>
-  </h3>
-  <p><i>Нажмите на ссылку, чтобы открыть RSS агрегатор</i></p>
+  <table>
+    <tr>
+      <td align="center">
+        <img src="https://i.imgur.com/placeholder-small.jpg" width="300" alt="App preview"><br>
+        <b>RSS Aggregator</b><br>
+        <a href="https://frontend-project-11.vercel.app">
+          <img src="https://img.shields.io/badge/▶️-Запустить-2ea44f?style=flat-square" alt="Launch">
+        </a>
+      </td>
+    </tr>
+  </table>
 </div>
