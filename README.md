@@ -4,8 +4,13 @@
 
 
 
-[![Vercel](https://img.shields.io/badge/Посмотреть%20сайт-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://frontend-project-11.vercel.app)
+## 🎯 Демонстрация
 
-## 📱 Ссылка на сайт
-
-[![Deploy](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)](https://frontend-project-11.vercel.app)
+<div align="center">
+  <h3>
+    <a href="https://frontend-project-11.vercel.app">
+      🚀 Перейти к приложению
+    </a>
+  </h3>
+  <p><i>Нажмите на ссылку, чтобы открыть RSS агрегатор</i></p>
+</div>
