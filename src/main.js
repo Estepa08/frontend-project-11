@@ -1,4 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css'; 
 import 'bootstrap';
 import Model from './model.js';
 import View from './view.js';
@@ -17,4 +17,5 @@ document.addEventListener('DOMContentLoaded', () => {
   
    console.log('App started with controller:', controller);
   // Всё! Приложение запущено
+    console.log('✅ RSS Aggregator запущен!');
 });

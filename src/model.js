@@ -1,6 +1,20 @@
+import * as yup from 'yup';
+
+const urlSchema = yup.string()
+  .url('Please enter a valid URL (e.g., https://example.com/rss)')
+  .required('URL cannot be empty');
+
 export default class Model {
   constructor() {
     this.feeds = [];
+  }
+  
+  validateUrl(url) {
+    return urlSchema.validate(url);
+  }
+  
+  isDuplicate(url) {
+    return this.feeds.some(feed => feed.url === url);
   }
   
   addFeed(url) {
@@ -15,18 +29,5 @@ export default class Model {
   
   getFeeds() {
     return this.feeds;
-  }
-  
-  removeFeed(id) {
-    this.feeds = this.feeds.filter(feed => feed.id !== id);
-  }
-  
-  isValidUrl(url) {
-    try {
-      new URL(url);
-      return true;
-    } catch {
-      return false;
-    }
   }
 }

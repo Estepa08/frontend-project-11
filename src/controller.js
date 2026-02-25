@@ -2,41 +2,69 @@ export default class Controller {
   constructor(model, view) {
     this.model = model;
     this.view = view;
-    
-    // Привязываем обработчики
-    this.view.bindAddFeed(this.handleAddFeed.bind(this));
-    this.view.bindFeedClick(this.handleFeedClick.bind(this));
-    
-    // Показываем существующие фиды (если есть)
+
+    this.view.bindSubmit(this.handleSubmit.bind(this));
     this.updateView();
   }
-  
-  handleAddFeed() {
+
+  // Главный метод с пайплайном
+  handleSubmit() {
+    console.log('1️⃣ handleSubmit');
     this.view.clearError();
-    
-    const url = this.view.getInputUrl();
-    
-    if (!url) {
-      this.view.showError('URL cannot be empty');
-      return;
-    }
-    
-    if (!this.model.isValidUrl(url)) {
-      this.view.showError('Please enter a valid URL');
-      return;
-    }
-    
-    this.model.addFeed(url);
-    this.updateView();
-    this.view.clearInput();
+
+    // Сначала получаем URL
+    const url = this.view.getInputValue();
+
+    // Потом используем
+    console.log('3️⃣ URL из формы:', url);
+
+    const pipeline = [
+      this.checkNotEmpty,
+      this.validateWithYup,
+      this.checkDuplicate,
+      this.addToModel,
+      this.updateView.bind(this),
+      this.resetForm,
+    ];
+
+    this.runPipeline(url, pipeline).catch((error) => {
+      this.view.showError(error.message);
+    });
   }
-  
-  handleFeedClick(id) {
-    // Например, удаляем фид по клику
-    this.model.removeFeed(id);
-    this.updateView();
+
+  // Универсальный запускатель пайплайна
+  runPipeline(initialValue, steps) {
+    return steps.reduce((promise, step) => {
+      return promise.then((value) => step.call(this, value));
+    }, Promise.resolve(initialValue));
   }
-  
+
+  checkNotEmpty(url) {
+    if (!url || url.trim() === '') {
+      return Promise.reject(new Error('URL cannot be empty'));
+    }
+    return Promise.resolve(url);
+  }
+
+  validateWithYup(url) {
+    return this.model.validateUrl(url);
+  }
+
+  checkDuplicate(url) {
+    if (this.model.isDuplicate(url)) {
+      return Promise.reject(new Error('This RSS feed has already been added'));
+    }
+    return Promise.resolve(url);
+  }
+
+  addToModel(url) {
+    return Promise.resolve(this.model.addFeed(url));
+  }
+
+  resetForm() {
+    return Promise.resolve(this.view.resetForm());
+  }
+
   updateView() {
     const feeds = this.model.getFeeds();
     this.view.displayFeeds(feeds);
