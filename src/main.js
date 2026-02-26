@@ -36,5 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const view = new View();
 
   // 3. Создаем контроллер и связываем всё
-  new Controller(model, view);
+  const controller = new Controller(model, view);
+
+  console.log('Controller initialized:', controller);
 });
