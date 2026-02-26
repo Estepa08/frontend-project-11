@@ -3,70 +3,99 @@ export default class Controller {
     this.model = model;
     this.view = view;
 
-    this.view.bindSubmit(this.handleSubmit.bind(this));
+    this.view
+      .on('submit', this.handleSubmit.bind(this))
+      .on('feedClick', this.handleFeedClick.bind(this));
+
+    // Инициализируем список фидов в состоянии View
     this.updateView();
   }
 
-  // Главный метод с пайплайном
-  handleSubmit() {
-    console.log('1️⃣ handleSubmit');
+  handleSubmit(url) {
+    console.log('1️⃣ handleSubmit с url:', url);
     this.view.clearError();
 
-    // Сначала получаем URL
-    const url = this.view.getInputValue();
+    if (!url || url.trim() === '') {
+      console.log('2️⃣ URL пустой, показываем ошибку');
+      this.view.showError('URL cannot be empty');
+      return;
+    }
 
-    // Потом используем
-    console.log('3️⃣ URL из формы:', url);
+    console.log('3️⃣ Запускаем pipeline для url:', url);
 
     const pipeline = [
-      this.checkNotEmpty,
-      this.validateWithYup,
-      this.checkDuplicate,
+      this.validateWithModel,
       this.addToModel,
       this.updateView.bind(this),
       this.resetForm,
     ];
 
-    this.runPipeline(url, pipeline).catch((error) => {
-      this.view.showError(error.message);
-    });
+    this.runPipeline(url, pipeline)
+      .then((result) => {
+        console.log('✅ Pipeline успешно завершен, результат:', result);
+      })
+      .catch((error) => {
+        console.log('❌ Ошибка в pipeline:', error);
+        this.view.showError(error.message);
+      });
   }
 
-  // Универсальный запускатель пайплайна
-  runPipeline(initialValue, steps) {
-    return steps.reduce((promise, step) => {
-      return promise.then((value) => step.call(this, value));
-    }, Promise.resolve(initialValue));
+  handleFeedClick(id) {
+    console.log('🖱️ feed click:', id);
+    // TODO: удаление
   }
 
-  checkNotEmpty(url) {
-    if (!url || url.trim() === '') {
-      return Promise.reject(new Error('URL cannot be empty'));
-    }
-    return Promise.resolve(url);
-  }
-
-  validateWithYup(url) {
-    return this.model.validateUrl(url);
-  }
-
-  checkDuplicate(url) {
-    if (this.model.isDuplicate(url)) {
-      return Promise.reject(new Error('This RSS feed has already been added'));
-    }
-    return Promise.resolve(url);
+  validateWithModel(url) {
+    console.log('🔍 validateWithModel для url:', url);
+    return this.model
+      .validateUrl(url)
+      .then((validUrl) => {
+        console.log('✅ validateWithModel успешно, валидный url:', validUrl);
+        return validUrl;
+      })
+      .catch((error) => {
+        console.log('❌ validateWithModel ошибка:', error.message || error);
+        throw error;
+      });
   }
 
   addToModel(url) {
-    return Promise.resolve(this.model.addFeed(url));
+    console.log('➕ addToModel для url:', url);
+    const feed = this.model.addFeed(url);
+    console.log('✅ Фид добавлен в модель:', feed);
+    return Promise.resolve(feed);
   }
 
   resetForm() {
+    console.log('🧹 resetForm');
     return Promise.resolve(this.view.resetForm());
   }
 
   updateView() {
+    console.log('🔄 updateView');
     const feeds = this.model.getFeeds();
-    this.view.displayFeeds(feeds);
+    console.log('📋 Текущие фиды в модели:', feeds);
+
+    this.view.updateFeeds(feeds); // ← обновляем через специальный метод
+
+    console.log('✅ View обновлен');
+  }
+
+  runPipeline(initialValue, steps) {
+    console.log('🚀 runPipeline запущен с initialValue:', initialValue);
+    console.log(
+      '📋 Шаги pipeline:',
+      steps.map((step) => step.name || 'анонимная функция'),
+    );
+
+    return steps.reduce((promise, step, index) => {
+      return promise.then((value) => {
+        console.log(
+          `⏩ Шаг ${index + 1}/${steps.length}: ${step.name || 'анонимная функция'}`,
+        );
+        console.log(`   Входное значение:`, value);
+        return step.call(this, value);
+      });
+    }, Promise.resolve(initialValue));
   }
 }
