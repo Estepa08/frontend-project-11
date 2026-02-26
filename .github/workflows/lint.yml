@@ -16,4 +16,5 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
+      - run: npm list --depth=0  # для отладки - показывает установленные пакеты
       - run: npm run lint
