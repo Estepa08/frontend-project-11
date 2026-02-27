@@ -2,31 +2,28 @@
 export default function parseRss(xmlText, sourceUrl) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(xmlText, 'application/xml');
-  
+
   const errorNode = doc.querySelector('parsererror');
   if (errorNode) throw new Error('errors.invalidRss');
-  
+
   const channel = doc.querySelector('channel');
   if (!channel) throw new Error('errors.invalidRss');
-  
-  const feedTitle = channel.querySelector('title')?.textContent || 'Без названия';
-  const feedDescription = channel.querySelector('description')?.textContent || '';
-  
+
+  const feedTitle =
+    channel.querySelector('title')?.textContent || 'Без названия';
+  const feedDescription =
+    channel.querySelector('description')?.textContent || '';
+
   const items = channel.querySelectorAll('item');
   const posts = Array.from(items).map((item, index) => {
     // Берем чистый текст описания, без HTML
     const descriptionEl = item.querySelector('description');
     let description = '';
-    
+
     if (descriptionEl) {
-      // Берем текстовое содержимое без HTML-тегов
+      // Берем текстовое содержимое и удаляем все HTML теги
       description = descriptionEl.textContent || '';
-      
-      // Если есть лишние ссылки (Comments), обрезаем
-      const commentsMatch = description.match(/(.*?)<a href=/s);
-      if (commentsMatch) {
-        description = commentsMatch[1].trim();
-      }
+      description = description.replace(/<[^>]*>/g, '').trim();
     }
 
     return {
@@ -35,10 +32,11 @@ export default function parseRss(xmlText, sourceUrl) {
       title: item.querySelector('title')?.textContent || 'Без заголовка',
       description: description,
       link: item.querySelector('link')?.textContent || '#',
-      pubDate: item.querySelector('pubDate')?.textContent || new Date().toISOString(),
+      pubDate:
+        item.querySelector('pubDate')?.textContent || new Date().toISOString(),
     };
   });
-  
+
   return {
     feed: {
       id: Date.now(),
@@ -47,6 +45,6 @@ export default function parseRss(xmlText, sourceUrl) {
       description: feedDescription,
       postCount: posts.length,
     },
-    posts
+    posts,
   };
 }
