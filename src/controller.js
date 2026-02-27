@@ -94,13 +94,11 @@ export default class Controller {
   }
 
   handleFeedClick(id) {
-    console.log('📌 Клик по фиду:', id);
-
     const feed = this.model.feedsManager.getFeedById(id);
     if (!feed) return;
 
     const posts = this.model.postsManager.getPosts(feed.url);
-    this.view.displayPosts(posts, feed.title);
+    this.view.togglePosts(posts, feed.title); // используем toggle вместо display
   }
 
   updateView() {

@@ -22,6 +22,8 @@ export default class View {
     this.postTemplate = document.getElementById('post-template');
     this.postsHeaderTemplate = document.getElementById('posts-header-template');
 
+    this.currentFeedTitle = '';
+    this.isPostsVisible = false;
     this.setLanguageTexts();
 
     // Новое состояние с разделением
@@ -161,7 +163,12 @@ export default class View {
       const item = e.target.closest('.list-group-item');
       if (item) {
         e.preventDefault();
-        this.handlers.feedClick?.(parseInt(item.dataset.id));
+        const id = parseInt(item.dataset.id);
+        // Находим фид по id и получаем его посты
+        const feed = this.state.feeds.find((f) => f.id === id);
+        if (feed && this.handlers.feedClick) {
+          this.handlers.feedClick(id); // теперь контроллер передаст посты
+        }
       }
     });
   }
@@ -278,18 +285,53 @@ export default class View {
   displayPosts(posts, feedTitle) {
     if (!posts || posts.length === 0) {
       this.postsContainer.style.display = 'none';
+      this.isPostsVisible = false;
       return;
     }
 
+    this.currentFeedTitle = feedTitle;
     this.postsContainer.innerHTML = '';
     this.postsContainer.style.display = 'block';
 
-    const headerClone = this.postsHeaderTemplate.content.cloneNode(true);
-    headerClone.querySelector('.feed-title').textContent = feedTitle;
-    this.postsContainer.appendChild(headerClone);
+    // Добавляем заголовок с кнопкой закрытия
+    const headerDiv = document.createElement('div');
+    headerDiv.className =
+      'd-flex justify-content-between align-items-center mb-3';
 
-    const postsList = this.postsContainer.querySelector('.posts-list');
+    const title = document.createElement('h5');
+    title.className = 'mb-0';
+    title.innerHTML = `<i class="fas fa-newspaper me-2 text-primary"></i>Посты из фида "${feedTitle}"`;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'btn-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.addEventListener('click', () => {
+      this.postsContainer.style.display = 'none';
+      this.isPostsVisible = false;
+    });
+
+    headerDiv.appendChild(title);
+    headerDiv.appendChild(closeBtn);
+    this.postsContainer.appendChild(headerDiv);
+
+    // Список постов
+    const postsList = document.createElement('div');
+    postsList.className = 'list-group';
+
     posts.forEach((post) => this.renderPost(post, postsList));
+    this.postsContainer.appendChild(postsList);
+
+    this.isPostsVisible = true;
+  }
+
+  togglePosts(posts, feedTitle) {
+    if (this.isPostsVisible) {
+      this.postsContainer.style.display = 'none';
+      this.isPostsVisible = false;
+    } else {
+      this.displayPosts(posts, feedTitle);
+      this.isPostsVisible = true;
+    }
   }
 
   renderPost(post, container) {
