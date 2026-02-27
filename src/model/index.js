@@ -6,8 +6,8 @@ import parseRss from './rssParser.js';
 console.log('📦 parseRss загружен:', typeof parseRss);
 
 const apiClient = axios.create({
-  baseURL: 'https://api.allorigins.win',
-  timeout: 10000,
+  baseURL: 'https://allorigins.hexlet.app',
+  timeout: 15000,
 });
 
 export default class Model {
@@ -43,53 +43,85 @@ export default class Model {
   }
 
   fetchRss(url) {
+    console.log('📡 fetchRss для:', url);
+
     const encodedUrl = encodeURIComponent(url);
+
     return apiClient
-      .get(`/raw?url=${encodedUrl}`)
-      .then((response) => response.data)
+      .get(`/raw?url=${encodedUrl}&disableCache=true`)
+      .then((response) => {
+        console.log('✅ RSS загружен через прокси');
+        console.log('📋 Тип ответа:', typeof response.data);
+
+        // Если ответ - объект, а не строка, значит прокси вернул ошибку
+        if (typeof response.data !== 'string') {
+          console.log('❌ Прокси вернул объект с ошибкой:', response.data);
+          return Promise.reject(new Error('errors.network'));
+        }
+
+        // Проверяем, что ответ похож на XML
+        const data = response.data;
+
+        // Проверка на HTML-страницу с ошибкой
+        if (data.includes('<!DOCTYPE html>') || data.includes('<html>')) {
+          console.log('❌ Прокси вернул HTML страницу');
+          return Promise.reject(new Error('errors.network'));
+        }
+
+        // Проверка на сообщения об ошибках
+        if (
+          data.includes('404 Not Found') ||
+          data.includes('502 Bad Gateway') ||
+          data.includes('504 Gateway Timeout')
+        ) {
+          console.log('❌ Прокси вернул HTTP ошибку');
+          return Promise.reject(new Error('errors.network'));
+        }
+
+        return data;
+      })
       .catch((error) => {
+        console.log(
+          '🔥 Начало обработки ошибки в fetchRss. Тип error:',
+          typeof error,
+        );
+
+        // Если мы уже создали и выбросили свою ошибку в then
+        if (error instanceof Error && error.message === 'errors.network') {
+          console.log('✅ Пробрасываем errors.network дальше');
+          return Promise.reject(error);
+        }
+
+        // Обработка ошибок axios
+        console.log('🔥 error.code:', error.code);
+        console.log('🔥 error.message:', error.message);
+
         if (error.code === 'ECONNABORTED') {
           return Promise.reject(new Error('errors.timeout'));
         }
-        return Promise.reject(new Error('errors.network'));
+
+        if (error.code === 'ENOTFOUND' || error.code === 'EAI_AGAIN') {
+          return Promise.reject(new Error('errors.network'));
+        }
+
+        if (error.response) {
+          console.log(
+            '❌ Прокси вернул ответ с ошибкой, статус:',
+            error.response.status,
+          );
+          return Promise.reject(new Error('errors.network'));
+        }
+
+        if (error.request) {
+          console.log('❌ Запрос был сделан, но нет ответа');
+          return Promise.reject(new Error('errors.network'));
+        }
+
+        // Если ничего не подошло
+        console.log('❌ Неизвестная ошибка axios:', error.message);
+        return Promise.reject(new Error('errors.unknown'));
       });
   }
-
-  // Для тестирования
-  //   fetchRss(url) {
-  //     console.log('📡 fetchRss для:', url);
-
-  //     // Просто загружаем напрямую (без прокси)
-  //     return fetch(url)
-  //       .then((response) => {
-  //         if (!response.ok) {
-  //           throw new Error(`HTTP error! status: ${response.status}`);
-  //         }
-  //         return response.text();
-  //       })
-  //       .then((xml) => {
-  //         console.log('✅ Файл загружен, длина:', xml.length);
-  //         return xml;
-  //       })
-  //       .catch((error) => {
-  //         console.error('❌ Ошибка загрузки:', error);
-  //         return Promise.reject(new Error('errors.network'));
-  //       });
-  //   }
-
-  // Для тестирования
-  //   fetchRss(url) {
-  //     // Временно используем axios с таймаутом
-  //     return apiClient
-  //       .get('/raw?url=' + encodeURIComponent(url))
-  //       .then((response) => response.data)
-  //       .catch((error) => {
-  //         if (error.code === 'ECONNABORTED') {
-  //           return Promise.reject(new Error('errors.timeout'));
-  //         }
-  //         return Promise.reject(new Error('errors.network'));
-  //       });
-  //   }
 
   loadRss(url) {
     console.log('1️⃣ loadRss начат для:', url);

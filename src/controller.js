@@ -11,33 +11,42 @@ export default class Controller {
   }
 
   handleSubmit(url) {
-    console.log('🎯 handleSubmit для:', url);
-
-    this.view.clearError();
+    this.view.clearFormError(); // ← очищаем только ошибки формы
     this.view.setLoading(true);
 
     if (!url || url.trim() === '') {
-      console.log('⛔ URL пустой');
+      this.view.setFormError('errors.urlRequired'); // ← ошибка формы
       this.view.setLoading(false);
-      this.view.showError('errors.urlRequired');
       return;
     }
 
-    // ✅ Pipeline с использованием методов модели
     const pipeline = [
-      this.validateUrl,           // 1. Валидация URL (метод модели)
-      this.fetchRss,              // 2. Загрузка через прокси (метод модели)
-      this.parseRss,              // 3. Парсинг XML (метод модели)
-      this.saveRssData,           // 4. Сохранение в модель (метод модели)
-      this.updateView.bind(this), // 5. Обновление UI
-      this.showSuccess,           // 6. Показ успеха
-      this.resetForm,             // 7. Очистка формы
+      this.validateUrl,
+      this.fetchRss,
+      this.parseRss,
+      this.saveRssData,
+      this.updateView.bind(this),
+      this.showSuccess,
+      this.resetForm,
     ];
 
     this.runPipeline(url, pipeline)
       .catch((error) => {
-        console.log('❌ Pipeline ошибка:', error);
-        this.view.showError(error.message || 'errors.unknown');
+        console.log('🔥 Поймана ошибка в pipeline:', error);
+        console.log('🔥 error.message:', error.message);
+        console.log('🔥 error.stack:', error.stack);
+
+        if (
+          error.message === 'errors.network' ||
+          error.message === 'errors.timeout' ||
+          error.message === 'errors.invalidRss'
+        ) {
+          console.log('✅ Определена сетевая ошибка:', error.message);
+          this.view.setNetworkError(error.message);
+        } else {
+          console.log('❌ Неизвестная ошибка, message:', error.message);
+          this.view.setNetworkError('errors.unknown');
+        }
       })
       .finally(() => {
         this.view.setLoading(false);
@@ -53,13 +62,14 @@ export default class Controller {
   // ШАГ 2: Загрузка RSS
   fetchRss(url) {
     console.log('📡 Шаг 2: Загрузка RSS');
+    this.currentUrl = url;
     return this.model.fetchRss(url);
   }
 
   // ШАГ 3: Парсинг RSS - напрямую из модели!
   parseRss(xmlText) {
     console.log('🔄 Шаг 3: Парсинг RSS');
-    return this.model.parseRss(xmlText, this.currentUrl);  // ← просто вызываем метод модели
+    return this.model.parseRss(xmlText, this.currentUrl); // ← просто вызываем метод модели
   }
 
   // ШАГ 4: Сохранение данных
