@@ -31,5 +31,5 @@ document.addEventListener('DOMContentLoaded', () => {
   const view = new View();
   const controller = new Controller(model, view);
 
-  console.log('✅ RSS Aggregator запущен!');
+  console.log('✅ RSS Aggregator запущен!', controller);
 });
