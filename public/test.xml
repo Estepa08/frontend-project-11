@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>🧪 Тестовый RSS фид из файла</title>
+    <description>📝 Это тестовое описание из локального XML файла. Проверяем загрузку, парсинг и отображение.</description>
+    <link>https://test.ru</link>
+    
+    <item>
+      <title>🔗 Первая новость из файла</title>
+      <description>Описание первой новости. Проверяем работу парсера.</description>
+      <link>https://test.ru/1</link>
+      <pubDate>Mon, 01 Jan 2024 12:00:00 GMT</pubDate>
+    </item>
+    
+    <item>
+      <title>🔗 Вторая новость с длинным заголовком для проверки</title>
+      <description>Описание второй новости. Проверяем как обрезается длинный текст.</description>
+      <link>https://test.ru/2</link>
+      <pubDate>Tue, 02 Jan 2024 13:30:00 GMT</pubDate>
+    </item>
+    
+    <item>
+      <title>🔗 Третья новость</title>
+      <description>Краткое описание.</description>
+      <link>https://test.ru/3</link>
+      <pubDate>Wed, 03 Jan 2024 09:15:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

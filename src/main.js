@@ -12,9 +12,7 @@ import resources from './locales/index.js';
 await i18next.init({
   resources,
   lng: 'ru',
-  interpolation: {
-    escapeValue: false,
-  },
+  interpolation: { escapeValue: false },
 });
 
 // Настройка локалей для Yup

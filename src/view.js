@@ -7,8 +7,14 @@ export default class View {
     this.input = document.getElementById('rss-input');
     this.submitButton = this.form.querySelector('button');
     this.feedsContainer = document.getElementById('feeds');
-    this.appTitle = document.querySelector('h1');
+    this.postsContainer = document.getElementById('posts-container');
     this.messagesContainer = document.getElementById('messages-container');
+    this.appTitle = document.querySelector('h1');
+
+    // Получаем шаблоны
+    this.feedTemplate = document.getElementById('feed-template');
+    this.postTemplate = document.getElementById('post-template');
+    this.postsHeaderTemplate = document.getElementById('posts-header-template');
 
     // Устанавливаем начальные тексты
     this.setLanguageTexts();
@@ -42,6 +48,19 @@ export default class View {
     this.submitButton.textContent = i18next.t('form.addButton');
   }
 
+  setLoading(isLoading) {
+    console.log('⏳ setLoading:', isLoading);
+
+    if (isLoading) {
+      this.submitButton.disabled = true;
+      this.submitButton.innerHTML =
+        '<span class="spinner-border spinner-border-sm me-2"></span>Загрузка...';
+    } else {
+      this.submitButton.disabled = false;
+      this.submitButton.innerHTML = i18next.t('form.addButton');
+    }
+  }
+
   // Показать сообщение в messages-container
   showMessage(messageCode, type = 'info') {
     this.state.message = messageCode;
@@ -53,7 +72,7 @@ export default class View {
         this.state.message = null;
         this.state.messageType = null;
       }
-    }, 3000);
+    }, 5000);
   }
 
   // Для ошибок (с красной рамкой)
@@ -183,40 +202,79 @@ export default class View {
   displayFeeds(feeds) {
     this.feedsContainer.innerHTML = '';
 
-    if (!feeds || feeds.length === 0) {
+    if (!feeds || feeds.length === 0) return;
+
+    feeds.forEach((feed) => {
+      const clone = this.feedTemplate.content.cloneNode(true);
+      const item = clone.querySelector('a');
+
+      // Заполняем данными
+      item.dataset.id = feed.id;
+
+      // ✅ Title
+      const titleEl = item.querySelector('.feed-title');
+      if (titleEl) titleEl.textContent = feed.title || feed.url;
+
+      // ✅ DESCRIPTION (новый элемент!)
+      const descEl = item.querySelector('.feed-description');
+      if (descEl) {
+        descEl.textContent = feed.description
+          ? feed.description.length > 100
+            ? feed.description.substring(0, 100) + '...'
+            : feed.description
+          : 'Нет описания';
+      }
+
+      // ✅ Date
+      const dateEl = item.querySelector('.feed-date');
+      if (dateEl) dateEl.textContent = feed.addedAt;
+
+      // ✅ Post count
+      const countEl = item.querySelector('.feed-posts-count');
+      if (countEl) countEl.textContent = feed.postCount || 0;
+
+      this.feedsContainer.appendChild(item);
+    });
+  }
+
+  displayPosts(posts, feedTitle) {
+    if (!posts || posts.length === 0) {
+      this.postsContainer.style.display = 'none';
       return;
     }
 
-    feeds.forEach((feed) => {
-      const item = document.createElement('a');
-      item.href = '#';
-      item.className = 'list-group-item list-group-item-action feed-item';
-      item.dataset.id = feed.id;
+    this.postsContainer.innerHTML = '';
+    this.postsContainer.style.display = 'block';
 
-      // Красивое отображение фида
-      item.innerHTML = `
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="flex-grow-1">
-          <div class="d-flex align-items-center mb-1">
-            <i class="fas fa-rss text-warning me-2" style="font-size: 1.1rem;"></i>
-            <span class="feed-title">${feed.title || feed.url}</span>
-          </div>
-          <div class="feed-meta ms-4">
-            <i class="fas fa-calendar-alt me-1"></i>
-            ${feed.addedAt}
-            <i class="fas fa-file-text ms-3 me-1"></i>
-            ${feed.postCount || 0} постов
-          </div>
-        </div>
-        <div class="ms-3">
-          <span class="badge bg-primary rounded-pill">
-            <i class="fas fa-chevron-right"></i>
-          </span>
-        </div>
-      </div>
-    `;
+    // Заголовок с названием фида
+    const headerClone = this.postsHeaderTemplate.content.cloneNode(true);
+    headerClone.querySelector('.feed-title').textContent = feedTitle;
+    this.postsContainer.appendChild(headerClone);
 
-      this.feedsContainer.appendChild(item);
+    // Список постов
+    const postsList = this.postsContainer.querySelector('.posts-list');
+
+    posts.forEach((post) => {
+      const postClone = this.postTemplate.content.cloneNode(true);
+      const link = postClone.querySelector('a');
+
+      link.href = post.link;
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+
+      // ✅ НАЗВАНИЕ ПОСТА КАК ТЕКСТ ССЫЛКИ
+      link.querySelector('.post-title').textContent = post.title;
+      link.querySelector('.post-date').textContent = new Date(
+        post.pubDate,
+      ).toLocaleDateString();
+
+      // Краткое описание (опционально)
+      if (post.description) {
+        link.querySelector('.post-description').textContent =
+          post.description.substring(0, 150) + '...';
+      }
+
+      postsList.appendChild(link);
     });
   }
 

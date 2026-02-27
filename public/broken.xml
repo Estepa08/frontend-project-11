@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Сломанный RSS</title>
+    <description>Этот файл с ошибкой</description>
+    
+    ❌ Здесь явно не закрыт тег
+    <item>
+      <title>Пост без закрытия
+      <link>https://test.ru/1</link>
+    </item>
+    
+    <item>
+      <title>Нормальный пост</title>
+      <link>https://test.ru/2</link>
+    </item>
+  </channel>
+<!-- Закрывающий тег пропущен!

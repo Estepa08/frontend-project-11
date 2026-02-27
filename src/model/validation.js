@@ -4,7 +4,7 @@ import i18next from 'i18next';
 export const urlSchema = yup
   .string()
   .required(() => i18next.t('errors.urlRequired'))
-  .url(() => i18next.t('errors.urlInvalid'))
+//   .url(() => i18next.t('errors.urlInvalid'))
   .test(
     'not-duplicate',
     () => i18next.t('errors.duplicate'),
