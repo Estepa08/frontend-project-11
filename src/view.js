@@ -184,19 +184,38 @@ export default class View {
     this.feedsContainer.innerHTML = '';
 
     if (!feeds || feeds.length === 0) {
-      // Просто оставляем контейнер пустым, без сообщения
       return;
     }
 
     feeds.forEach((feed) => {
       const item = document.createElement('a');
       item.href = '#';
-      item.className = 'list-group-item list-group-item-action';
+      item.className = 'list-group-item list-group-item-action feed-item';
       item.dataset.id = feed.id;
+
+      // Красивое отображение фида
       item.innerHTML = `
-      <strong>${feed.url}</strong>
-      <small class="text-muted float-end">${feed.addedAt}</small>
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="flex-grow-1">
+          <div class="d-flex align-items-center mb-1">
+            <i class="fas fa-rss text-warning me-2" style="font-size: 1.1rem;"></i>
+            <span class="feed-title">${feed.title || feed.url}</span>
+          </div>
+          <div class="feed-meta ms-4">
+            <i class="fas fa-calendar-alt me-1"></i>
+            ${feed.addedAt}
+            <i class="fas fa-file-text ms-3 me-1"></i>
+            ${feed.postCount || 0} постов
+          </div>
+        </div>
+        <div class="ms-3">
+          <span class="badge bg-primary rounded-pill">
+            <i class="fas fa-chevron-right"></i>
+          </span>
+        </div>
+      </div>
     `;
+
       this.feedsContainer.appendChild(item);
     });
   }

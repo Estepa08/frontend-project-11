@@ -3,7 +3,7 @@ import 'bootstrap';
 import i18next from 'i18next';
 import * as yup from 'yup';
 
-import Model from './model.js';
+import Model from './model/index.js'; // ← обрати внимание на путь!
 import View from './view.js';
 import Controller from './controller.js';
 import resources from './locales/index.js';
@@ -11,9 +11,9 @@ import resources from './locales/index.js';
 // Инициализация i18next
 await i18next.init({
   resources,
-  lng: 'ru', // явно указываем русский язык
+  lng: 'ru',
   interpolation: {
-    escapeValue: false, // не экранировать HTML
+    escapeValue: false,
   },
 });
 
@@ -29,14 +29,14 @@ yup.setLocale({
 
 // Здесь мы собираем всё вместе
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Создаем модель (данные)
+  // 1. Создаем модель (теперь через index.js)
   const model = new Model();
 
-  // 2. Создаем представление (ссылки на элементы)
+  // 2. Создаем представление
   const view = new View();
 
   // 3. Создаем контроллер и связываем всё
   const controller = new Controller(model, view);
 
-  console.log('Controller initialized:', controller);
+  console.log('✅ RSS Aggregator запущен!');
 });
