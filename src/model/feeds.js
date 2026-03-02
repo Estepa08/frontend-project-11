@@ -29,12 +29,20 @@ export default class FeedsManager {
   }
 
   // Обновляем существующий фид (например, после загрузки постов)
-  updateFeed(feedId, updates) {
+  updateFeed(id, updatedData) {
+    const index = this.feeds.findIndex((feed) => feed.id === id);
+    if (index !== -1) {
+      this.feeds[index] = { ...this.feeds[index], ...updatedData };
+      return this.feeds[index];
+    }
+    return null;
+  }
+
+  updatePostCount(feedId, count) {
     const feed = this.feeds.find((f) => f.id === feedId);
     if (feed) {
-      Object.assign(feed, updates);
+      feed.postCount = count;
     }
-    return feed;
   }
 
   getFeeds() {

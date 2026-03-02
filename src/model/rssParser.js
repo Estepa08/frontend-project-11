@@ -21,9 +21,10 @@ export default function parseRss(xmlText, sourceUrl) {
     let description = '';
 
     if (descriptionEl) {
-      // Берем текстовое содержимое и удаляем все HTML теги
-      description = descriptionEl.textContent || '';
-      description = description.replace(/<[^>]*>/g, '').trim();
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = descriptionEl.textContent || '';
+      description = tempDiv.textContent || tempDiv.innerText || '';
+      description = description.trim();
     }
 
     return {

@@ -16,6 +16,18 @@ export default class Model {
     this.postsManager = new PostsManager();
   }
 
+  getPostsByFeedUrl(feedUrl) {
+    return this.postsManager.getPostsByFeedUrl(feedUrl);
+  }
+
+  addPosts(posts) {
+    return this.postsManager.addPosts(posts);
+  }
+
+  // НОВЫЙ МЕТОД для обновления фида
+  updateFeed(id, updatedData) {
+    return this.feedsManager.updateFeed(id, updatedData);
+  }
   parseRss(xmlText, url) {
     this.currentUrl = url;
     return parseRss(xmlText, url); // ← просто вызываем импортированную функцию
