@@ -35,6 +35,7 @@ export default function parseRss(xmlText, sourceUrl) {
       link: item.querySelector('link')?.textContent || '#',
       pubDate:
         item.querySelector('pubDate')?.textContent || new Date().toISOString(),
+      isRead: false, // ← НОВОЕ ПОЛЕ! Все новые посты непрочитанные
     };
   });
 

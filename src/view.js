@@ -22,9 +22,17 @@ export default class View {
     this.postTemplate = document.getElementById('post-template');
     this.postsHeaderTemplate = document.getElementById('posts-header-template');
 
+    this.postModal = new bootstrap.Modal(document.getElementById('postModal'));
+    this.modalTitle = document.querySelector('#postModal .modal-title');
+    this.modalDescription = document.querySelector(
+      '#postModal .post-description',
+    );
+    this.modalLink = document.querySelector('#postModal .btn-primary');
+
     this.currentFeedTitle = '';
     this.isPostsVisible = false;
     this.setLanguageTexts();
+    this.initPreviewListeners();
 
     // Новое состояние с разделением
     this.state = onChange(
@@ -55,6 +63,7 @@ export default class View {
       submit: null,
       input: null,
       feedClick: null,
+      previewPost: null,
     };
 
     this.initEventListeners();
@@ -193,6 +202,18 @@ export default class View {
     return this;
   }
 
+  initPreviewListeners() {
+    this.postsContainer.addEventListener('click', (e) => {
+      const previewBtn = e.target.closest('.preview-btn');
+      if (previewBtn) {
+        e.preventDefault();
+        const postId = previewBtn.dataset.postId;
+        if (this.handlers.previewPost) {
+          this.handlers.previewPost(postId);
+        }
+      }
+    });
+  }
   // ===== РАБОТА С ФОРМОЙ =====
 
   getInputValue() {
@@ -349,11 +370,17 @@ export default class View {
 
   renderPost(post, container) {
     const postClone = this.postTemplate.content.cloneNode(true);
-    const link = postClone.querySelector('a');
+    const wrapper = document.createElement('div');
+    wrapper.className = 'd-flex align-items-center';
 
+    const link = postClone.querySelector('a');
     link.href = post.link;
     link.setAttribute('target', '_blank');
     link.setAttribute('rel', 'noopener noreferrer');
+    link.classList.add('flex-grow-1');
+
+    // Добавляем класс жирности в зависимости от прочитанности
+    link.classList.add(post.isRead ? 'fw-normal' : 'fw-bold');
 
     link.querySelector('.post-title').textContent = post.title;
     link.querySelector('.post-date').textContent = new Date(
@@ -365,7 +392,15 @@ export default class View {
         post.description.substring(0, 150) + '...';
     }
 
-    container.appendChild(link);
+    // Кнопка предпросмотра
+    const previewBtn = document.createElement('button');
+    previewBtn.className = 'btn btn-sm btn-outline-primary ms-2 preview-btn';
+    previewBtn.textContent = 'Просмотр';
+    previewBtn.dataset.postId = post.id;
+
+    wrapper.appendChild(link);
+    wrapper.appendChild(previewBtn);
+    container.appendChild(wrapper);
   }
 
   showEmptyMessage() {
@@ -373,5 +408,12 @@ export default class View {
     emptyMessage.className = 'alert alert-info';
     emptyMessage.textContent = i18next.t('messages.noFeeds');
     this.feedsContainer.appendChild(emptyMessage);
+  }
+
+  showPostPreview(post) {
+    this.modalTitle.textContent = post.title;
+    this.modalDescription.textContent = post.description || 'Нет описания';
+    this.modalLink.href = post.link;
+    this.postModal.show();
   }
 }
