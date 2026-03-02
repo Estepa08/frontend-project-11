@@ -125,6 +125,19 @@ export default class View {
     }, MESSAGE_DISPLAY_TIME);
   }
 
+  showInfo(message) {
+    // ← убрали messageCode, теперь принимает любую строку
+    this.state.message = message; // ← кладем сразу строку, не через i18next
+    this.state.messageType = 'info';
+
+    setTimeout(() => {
+      if (this.state.message === message) {
+        this.state.message = null;
+        this.state.messageType = null;
+      }
+    }, MESSAGE_DISPLAY_TIME);
+  }
+
   // Для обратной совместимости
   showError(errorCode) {
     this.setFormError(errorCode);
