@@ -18,11 +18,12 @@ const formatDate = (dateString) => {
 };
 
 export default class PostsView extends View {
-    constructor(container, postTemplate, headerTemplate) {
+    constructor(container, postTemplate) {
+        // 👈 УБРАЛИ headerTemplate
         super(container);
         this.postTemplate = postTemplate;
-        this.headerTemplate = headerTemplate;
-        this.currentFeedTitle = '';
+        // this.headerTemplate больше не нужен
+        // this.currentFeedTitle больше не нужен
 
         const modalElement = document.getElementById('postModal');
         if (modalElement && window.bootstrap) {
@@ -44,12 +45,8 @@ export default class PostsView extends View {
         });
     }
 
-    render(posts, feedTitle) {
-        if (!posts || posts.length === 0) {
-            this.hide();
-            return;
-        }
-
+    render(posts) {
+        // 👈 УБРАЛИ feedTitle
         // Проверяем, есть ли уже заголовок секции
         let sectionHeader = this.container.parentNode.querySelector('h2.section-header');
         if (!sectionHeader) {
@@ -61,41 +58,29 @@ export default class PostsView extends View {
             this.container.parentNode.insertBefore(sectionHeader, this.container);
         }
 
-        this.currentFeedTitle = feedTitle;
+        if (!posts || posts.length === 0) {
+            this.hide();
+            return;
+        }
+
         this.show();
         this.clear();
-
-        // this.renderHeader();
         this.renderPosts(posts);
     }
 
-    renderHeader() {
-        const clone = this.headerTemplate.content.cloneNode(true);
-        const headerEl = clone.querySelector('h5');
-
-        // Добавляем класс для отступа
-        headerEl.classList.add('mt-2', 'mb-3');
-
-        const titleText = i18next.t('posts.header', { feedTitle: this.currentFeedTitle });
-        headerEl.innerHTML = `<i class="fas fa-newspaper me-2 text-primary"></i>${titleText}`;
-
-        this.container.appendChild(clone);
-    }
+    // 👇 УДАЛИЛИ renderHeader полностью
 
     renderPosts(posts) {
-        let postsList = this.container.querySelector('.posts-list');
-        if (!postsList) {
-            postsList = document.createElement('div');
-            postsList.className = 'posts-list';
-            this.container.appendChild(postsList);
-        } else {
-            postsList.innerHTML = '';
-        }
+        // Сортируем посты по дате (новые сверху)
+        const sortedPosts = [...posts].sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 
-        posts.forEach((post) => this.renderPost(post, postsList));
+        // Очищаем контейнер перед рендером
+        this.container.innerHTML = '';
+
+        sortedPosts.forEach((post) => this.renderPost(post));
     }
 
-    renderPost(post, container) {
+    renderPost(post) {
         const clone = this.postTemplate.content.cloneNode(true);
         const wrapper = document.createElement('div');
         wrapper.className = 'd-flex align-items-center mb-2';
@@ -124,7 +109,7 @@ export default class PostsView extends View {
 
         wrapper.appendChild(link);
         wrapper.appendChild(previewBtn);
-        container.appendChild(wrapper);
+        this.container.appendChild(wrapper);
     }
 
     showPreview(post) {

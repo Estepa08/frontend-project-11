@@ -1,4 +1,4 @@
-// app/init.js
+// app/init.js (исправленная версия)
 import i18next from 'i18next';
 import * as yup from 'yup';
 import Controller from '../core/Controller.js';
@@ -32,8 +32,8 @@ class AppController extends Controller {
         );
         this.postsView = new PostsView(
             document.getElementById('posts-container'),
-            document.getElementById('post-template'),
-            document.getElementById('posts-header-template')
+            document.getElementById('post-template')
+            // 👆 УБРАЛИ ТРЕТИЙ ПАРАМЕТР
         );
         this.messageView = new MessageView(document.getElementById('messages-container'));
 
@@ -61,7 +61,9 @@ class AppController extends Controller {
 
                 this.formView.init();
                 this.formView.onSubmit(this.handleSubmit.bind(this));
-                this.feedsView.onFeedClick(this.handleFeedClick.bind(this));
+
+                // 👇 УБИРАЕМ onFeedClick - он больше не нужен
+                // this.feedsView.onFeedClick(this.handleFeedClick.bind(this));
 
                 if (this.postsView && typeof this.postsView.onPreviewClick === 'function') {
                     this.postsView.onPreviewClick(this.handlePreview.bind(this));
@@ -69,6 +71,12 @@ class AppController extends Controller {
 
                 this.feedsManager.subscribe((state) => {
                     this.feedsView.render(state.feeds);
+                });
+
+                // 👇 ДОБАВЛЯЕМ подписку на посты
+                this.postsManager.subscribe((state) => {
+                    const allPosts = this.postsManager.getAllPosts();
+                    this.postsView.render(allPosts);
                 });
 
                 this.updateView();
@@ -113,7 +121,7 @@ class AppController extends Controller {
                     });
 
                     this.messageView.show(`📢 ${newPosts.length} новых постов`, 'info');
-                    this.updateView();
+                    // this.updateView() убираем - посты обновятся через подписку
                 }
             })
             .catch((error) => {
@@ -131,11 +139,9 @@ class AppController extends Controller {
     }
 
     handleSubmit(url) {
-        // 1. Подготовка
         this.formView.clearError();
         this.formView.setLoading(true);
 
-        // 2. Простая проверка на пустоту
         if (!url || url.trim() === '') {
             this.formView.setLoading(false);
             this.messageView.show('errors.urlRequired', 'danger');
@@ -143,12 +149,10 @@ class AppController extends Controller {
             return;
         }
 
-        // 3. Цепочка промисов
         validateUrl(url, this.feedsManager.getState().feeds)
             .then(() => fetchRss(url))
             .then((xmlText) => parseRss(xmlText, url))
             .then(({ feed, posts }) => {
-                // 4. Успех - сохраняем данные
                 this.feedsManager.addFeed(feed);
                 this.postsManager.addPosts(posts);
 
@@ -157,7 +161,6 @@ class AppController extends Controller {
                 this.formView.focus();
             })
             .catch((error) => {
-                // 5. Обработка ошибок
                 if (error.message?.startsWith('errors.')) {
                     if (
                         ['errors.urlRequired', 'errors.urlInvalid', 'errors.duplicate'].includes(
@@ -172,11 +175,12 @@ class AppController extends Controller {
                 }
             })
             .finally(() => {
-                // 6. Всегда убираем загрузку
                 this.formView.setLoading(false);
             });
     }
 
+    // 👇 УДАЛЯЕМ handleFeedClick - он больше не нужен
+    /*
     handleFeedClick(id) {
         const feed = this.feedsManager.getFeedById(id);
         if (!feed) return;
@@ -184,6 +188,7 @@ class AppController extends Controller {
         const posts = this.postsManager.getPostsByFeedUrl(feed.url);
         this.postsView.render(posts, feed.title);
     }
+    */
 
     handlePreview(postId) {
         const post = this.postsManager.getPostById(postId);
@@ -195,11 +200,12 @@ class AppController extends Controller {
         this.postsManager.markAsRead(postId);
         this.postsView.showPreview(post);
 
-        const feed = this.feedsManager.getFeedByUrl(post.feedUrl);
-        if (feed) {
-            const posts = this.postsManager.getPostsByFeedUrl(post.feedUrl);
-            this.postsView.render(posts, feed.title);
-        }
+        // 👇 УБИРАЕМ обновление постов здесь - они обновятся через подписку
+        // const feed = this.feedsManager.getFeedByUrl(post.feedUrl);
+        // if (feed) {
+        //     const posts = this.postsManager.getPostsByFeedUrl(post.feedUrl);
+        //     this.postsView.render(posts, feed.title);
+        // }
     }
 
     updateView() {
