@@ -10,8 +10,23 @@ export default {
             },
 
             form: {
+                label: 'Начните читать RSS сегодня! Это легко, это красиво',
                 placeholder: 'Ссылка RSS',
                 addButton: 'Добавить',
+                example: 'Пример: https://news.ycombinator.com/rss',
+            },
+
+            feeds: {
+                postsCount: '{{count}} постов',
+                postsCount_zero: '0 постов',
+                postsCount_one: '{{count}} пост',
+                postsCount_few: '{{count}} поста',
+                postsCount_many: '{{count}} постов',
+            },
+
+            // 👇 ДОБАВИТЬ: для заголовка постов
+            posts: {
+                header: 'Посты из фида "{{feedTitle}}"',
             },
 
             errors: {

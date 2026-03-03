@@ -1,5 +1,6 @@
-import 'bootstrap';
+// modules/posts/PostsView.js
 import View from '../../core/View.js';
+import i18next from 'i18next';
 import { MAX_POST_DESCRIPTION_LENGTH } from '../../utils/constants.js';
 
 const truncate = (text, maxLength) => {
@@ -23,14 +24,13 @@ export default class PostsView extends View {
         this.headerTemplate = headerTemplate;
         this.currentFeedTitle = '';
 
-        // Инициализируем модальное окно (оно уже есть в HTML)
         const modalElement = document.getElementById('postModal');
-        if (modalElement) {
+        if (modalElement && window.bootstrap) {
             this.modal = new window.bootstrap.Modal(modalElement);
             this.modalTitle = modalElement.querySelector('.modal-title');
             this.modalDescription = modalElement.querySelector('.modal-body .post-description');
             this.modalLink = modalElement.querySelector('.btn-primary');
-        } else {
+            this.modalCloseBtn = modalElement.querySelector('.btn-secondary'); // 👈 ДЛЯ КНОПКИ ЗАКРЫТЬ
         }
     }
 
@@ -60,15 +60,24 @@ export default class PostsView extends View {
 
     renderHeader() {
         const clone = this.headerTemplate.content.cloneNode(true);
-        const titleEl = clone.querySelector('.feed-title');
-        if (titleEl) {
-            titleEl.textContent = this.currentFeedTitle;
+        const headerEl = clone.querySelector('h5');
+        const feedTitleSpan = clone.querySelector('.feed-title');
+
+        // 👇 ЗАМЕНЯЕМ ТЕКСТ ЗАГОЛОВКА ЧЕРЕЗ i18next
+        const titleText = i18next.t('posts.header', { feedTitle: this.currentFeedTitle });
+
+        // Вариант 1: если хотим сохранить структуру с иконкой
+        headerEl.innerHTML = `<i class="fas fa-newspaper me-2 text-primary"></i>${titleText}`;
+
+        // feedTitleSpan больше не нужен, так как titleText уже содержит название фида
+        if (feedTitleSpan) {
+            feedTitleSpan.remove();
         }
+
         this.container.appendChild(clone);
     }
 
     renderPosts(posts) {
-        // Создаем контейнер для списка постов
         let postsList = this.container.querySelector('.posts-list');
         if (!postsList) {
             postsList = document.createElement('div');
@@ -103,10 +112,9 @@ export default class PostsView extends View {
             descEl.textContent = truncate(post.description, MAX_POST_DESCRIPTION_LENGTH);
         }
 
-        // Добавляем кнопку просмотра
         const previewBtn = document.createElement('button');
         previewBtn.className = 'btn btn-sm btn-outline-primary ms-2 preview-btn';
-        previewBtn.textContent = 'Просмотр';
+        previewBtn.textContent = i18next.t('modal.readFull'); // 👈 ИСПОЛЬЗУЕМ i18next
         previewBtn.dataset.postId = post.id;
 
         wrapper.appendChild(link);
@@ -116,12 +124,20 @@ export default class PostsView extends View {
 
     showPreview(post) {
         if (!this.modal) {
+            console.error('Модальное окно не инициализировано');
             return;
         }
 
         this.modalTitle.textContent = post.title;
         this.modalDescription.textContent = post.description || 'Нет описания';
         this.modalLink.href = post.link;
+
+        // 👇 ДОБАВЛЯЕМ ТЕКСТЫ ДЛЯ КНОПОК МОДАЛКИ
+        this.modalLink.textContent = i18next.t('modal.readFull');
+        if (this.modalCloseBtn) {
+            this.modalCloseBtn.textContent = i18next.t('modal.close');
+        }
+
         this.modal.show();
     }
 }

@@ -35,6 +35,8 @@ export default class FeedsView extends View {
             const clone = this.template.content.cloneNode(true);
 
             const item = clone.querySelector('a');
+            const countEl = item.querySelector('.feed-posts-count'); // 👈 ЭТО БЫЛО ПРОПУЩЕНО
+            const count = feed.postCount || 0;
 
             item.dataset.id = feed.id;
             item.querySelector('.feed-title').textContent = feed.title || feed.url;
@@ -43,7 +45,9 @@ export default class FeedsView extends View {
                 MAX_DESCRIPTION_LENGTH
             );
             item.querySelector('.feed-date').textContent = feed.addedAt;
-            item.querySelector('.feed-posts-count').textContent = feed.postCount || 0;
+
+            // 👇 ИСПОЛЬЗУЕМ i18next ДЛЯ СЧЕТЧИКА
+            countEl.textContent = i18next.t('feeds.postsCount', { count });
 
             this.container.appendChild(clone);
         });
