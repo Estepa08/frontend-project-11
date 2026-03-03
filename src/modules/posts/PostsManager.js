@@ -16,6 +16,10 @@ export default class PostsManager extends Model {
         return this.state.posts.filter((post) => post.feedUrl === feedUrl);
     }
 
+    getPostById(id) {
+        return this.state.posts.find((post) => post.id === id); // Сравнение без приведения типов
+    }
+
     getAllPosts() {
         return this.state.posts;
     }

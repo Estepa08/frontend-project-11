@@ -57,7 +57,16 @@ class AppController extends Controller {
         this.formView.onSubmit(this.handleSubmit.bind(this));
         this.feedsView.onFeedClick(this.handleFeedClick.bind(this));
 
+        // ✅ Правильно: вызываем метод postsView.onPreviewClick
+        if (this.postsView && typeof this.postsView.onPreviewClick === 'function') {
+            this.postsView.onPreviewClick(this.handlePreview.bind(this));
+            console.log('✅ Подписка на preview добавлена');
+        } else {
+            console.warn('⚠️ postsView.onPreviewClick не доступен', this.postsView);
+        }
+
         this.feedsManager.subscribe((state) => {
+            console.log('🔄 Фиды обновлены:', state.feeds);
             this.feedsView.render(state.feeds);
         });
 
@@ -119,7 +128,6 @@ class AppController extends Controller {
         } catch (error) {
             console.error(`Ошибка обновления ${feed.url}:`, error);
 
-            // Показываем ошибку не чаще чем раз в минуту
             if (!this.lastProxyError || Date.now() - this.lastProxyError > 60000) {
                 if (error.message === 'errors.proxyUnavailable') {
                     this.messageView.show('errors.proxyUnavailable', 'warning');
@@ -181,6 +189,26 @@ class AppController extends Controller {
 
         const posts = this.postsManager.getPostsByFeedUrl(feed.url);
         this.postsView.render(posts, feed.title);
+    }
+
+    handlePreview(postId) {
+        console.log('handlePreview получил postId:', postId, 'тип:', typeof postId);
+
+        const post = this.postsManager.getPostById(postId);
+
+        if (!post) {
+            console.error('Пост не найден:', postId);
+            return;
+        }
+
+        this.postsManager.markAsRead(postId);
+        this.postsView.showPreview(post);
+
+        const feed = this.feedsManager.getFeedByUrl(post.feedUrl);
+        if (feed) {
+            const posts = this.postsManager.getPostsByFeedUrl(post.feedUrl);
+            this.postsView.render(posts, feed.title);
+        }
     }
 
     updateView() {
