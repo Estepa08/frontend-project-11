@@ -74,7 +74,7 @@ class AppController extends Controller {
                 });
 
                 // 👇 ДОБАВЛЯЕМ подписку на посты
-                this.postsManager.subscribe((state) => {
+                this.postsManager.subscribe(() => {
                     const allPosts = this.postsManager.getAllPosts();
                     this.postsView.render(allPosts);
                 });
@@ -121,7 +121,6 @@ class AppController extends Controller {
                     });
 
                     this.messageView.show(`📢 ${newPosts.length} новых постов`, 'info');
-                    // this.updateView() убираем - посты обновятся через подписку
                 }
             })
             .catch((error) => {
@@ -179,17 +178,6 @@ class AppController extends Controller {
             });
     }
 
-    // 👇 УДАЛЯЕМ handleFeedClick - он больше не нужен
-    /*
-    handleFeedClick(id) {
-        const feed = this.feedsManager.getFeedById(id);
-        if (!feed) return;
-
-        const posts = this.postsManager.getPostsByFeedUrl(feed.url);
-        this.postsView.render(posts, feed.title);
-    }
-    */
-
     handlePreview(postId) {
         const post = this.postsManager.getPostById(postId);
 
@@ -199,13 +187,6 @@ class AppController extends Controller {
 
         this.postsManager.markAsRead(postId);
         this.postsView.showPreview(post);
-
-        // 👇 УБИРАЕМ обновление постов здесь - они обновятся через подписку
-        // const feed = this.feedsManager.getFeedByUrl(post.feedUrl);
-        // if (feed) {
-        //     const posts = this.postsManager.getPostsByFeedUrl(post.feedUrl);
-        //     this.postsView.render(posts, feed.title);
-        // }
     }
 
     updateView() {
