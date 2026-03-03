@@ -41,103 +41,96 @@ class AppController extends Controller {
         this.lastProxyError = null;
     }
 
-    async init() {
-        await i18next.init({
-            resources,
-            lng: config.i18n.lng,
-            interpolation: { escapeValue: false },
-        });
+    init() {
+        i18next
+            .init({
+                resources,
+                lng: config.i18n.lng,
+                interpolation: { escapeValue: false },
+            })
+            .then(() => {
+                yup.setLocale({
+                    mixed: { required: () => i18next.t('errors.urlRequired') },
+                    string: { url: () => i18next.t('errors.urlInvalid') },
+                });
 
-        yup.setLocale({
-            mixed: { required: () => i18next.t('errors.urlRequired') },
-            string: { url: () => i18next.t('errors.urlInvalid') },
-        });
+                this.formView.init();
+                this.formView.onSubmit(this.handleSubmit.bind(this));
+                this.feedsView.onFeedClick(this.handleFeedClick.bind(this));
 
-        this.formView.init();
-        this.formView.onSubmit(this.handleSubmit.bind(this));
-        this.feedsView.onFeedClick(this.handleFeedClick.bind(this));
+                if (this.postsView && typeof this.postsView.onPreviewClick === 'function') {
+                    this.postsView.onPreviewClick(this.handlePreview.bind(this));
+                }
 
-        // ✅ Правильно: вызываем метод postsView.onPreviewClick
-        if (this.postsView && typeof this.postsView.onPreviewClick === 'function') {
-            this.postsView.onPreviewClick(this.handlePreview.bind(this));
-        } else {
-        }
+                this.feedsManager.subscribe((state) => {
+                    this.feedsView.render(state.feeds);
+                });
 
-        this.feedsManager.subscribe((state) => {
-            this.feedsView.render(state.feeds);
-        });
-
-        this.updateView();
-        this.startAutoUpdate();
+                this.updateView();
+                this.startAutoUpdate();
+            });
     }
 
     startAutoUpdate() {
-        const update = async () => {
+        const update = () => {
             if (this.isUpdating) return;
 
             this.isUpdating = true;
             const feeds = this.feedsManager.getState().feeds;
 
-            for (const feed of feeds) {
-                try {
-                    await this.checkFeedUpdates(feed);
-                } catch {}
-            }
+            const promises = feeds.map((feed) => this.checkFeedUpdates(feed).catch(() => {}));
 
-            this.isUpdating = false;
-            this.updateTimer = setTimeout(update, UPDATE_INTERVAL);
+            Promise.all(promises).finally(() => {
+                this.isUpdating = false;
+                this.updateTimer = setTimeout(update, UPDATE_INTERVAL);
+            });
         };
 
         this.updateTimer = setTimeout(update, UPDATE_INTERVAL);
     }
 
-    async checkFeedUpdates(feed) {
-        try {
-            const xmlText = await fetchRss(feed.url);
-            const data = parseRss(xmlText, feed.url);
-
-            const existingPosts = this.postsManager.getPostsByFeedUrl(feed.url);
-
-            const newPosts = data.posts.filter(
-                (newPost) => !existingPosts.some((existing) => existing.title === newPost.title)
-            );
-
-            if (newPosts.length > 0) {
-                this.postsManager.addPosts(
-                    newPosts.map((post) => ({
-                        ...post,
-                        feedUrl: feed.url,
-                    }))
+    checkFeedUpdates(feed) {
+        return fetchRss(feed.url)
+            .then((xmlText) => parseRss(xmlText, feed.url))
+            .then((data) => {
+                const existingPosts = this.postsManager.getPostsByFeedUrl(feed.url);
+                const newPosts = data.posts.filter(
+                    (newPost) => !existingPosts.some((existing) => existing.title === newPost.title)
                 );
 
-                this.feedsManager.updateFeed(feed.id, {
-                    postCount: (feed.postCount || 0) + newPosts.length,
-                });
+                if (newPosts.length > 0) {
+                    this.postsManager.addPosts(
+                        newPosts.map((post) => ({ ...post, feedUrl: feed.url }))
+                    );
 
-                this.messageView.show(
-                    `📢 ${newPosts.length} новых постов в "${feed.title}"`,
-                    'info'
-                );
-                this.updateView();
-            }
-        } catch (error) {
-            if (!this.lastProxyError || Date.now() - this.lastProxyError > 60000) {
-                if (error.message === 'errors.proxyUnavailable') {
-                    this.messageView.show('errors.proxyUnavailable', 'warning');
-                } else if (error.message === 'errors.tooManyRequests') {
-                    this.messageView.show('errors.tooManyRequests', 'warning');
-                } else {
-                    this.messageView.show(error.message || 'errors.network', 'danger');
+                    this.feedsManager.updateFeed(feed.id, {
+                        postCount: (feed.postCount || 0) + newPosts.length,
+                    });
+
+                    this.messageView.show(`📢 ${newPosts.length} новых постов`, 'info');
+                    this.updateView();
                 }
-                this.lastProxyError = Date.now();
-            }
-        }
+            })
+            .catch((error) => {
+                if (!this.lastProxyError || Date.now() - this.lastProxyError > 60000) {
+                    if (error.message === 'errors.proxyUnavailable') {
+                        this.messageView.show('errors.proxyUnavailable', 'warning');
+                    } else if (error.message === 'errors.tooManyRequests') {
+                        this.messageView.show('errors.tooManyRequests', 'warning');
+                    } else {
+                        this.messageView.show(error.message || 'errors.network', 'danger');
+                    }
+                    this.lastProxyError = Date.now();
+                }
+            });
     }
 
-    async handleSubmit(url) {
+    handleSubmit(url) {
+        // 1. Подготовка
         this.formView.clearError();
         this.formView.setLoading(true);
 
+        // 2. Простая проверка на пустоту
         if (!url || url.trim() === '') {
             this.formView.setLoading(false);
             this.messageView.show('errors.urlRequired', 'danger');
@@ -145,33 +138,38 @@ class AppController extends Controller {
             return;
         }
 
-        try {
-            await validateUrl(url, this.feedsManager.getState().feeds);
-            const xmlText = await fetchRss(url);
-            const { feed, posts } = parseRss(xmlText, url);
+        // 3. Цепочка промисов
+        validateUrl(url, this.feedsManager.getState().feeds)
+            .then(() => fetchRss(url))
+            .then((xmlText) => parseRss(xmlText, url))
+            .then(({ feed, posts }) => {
+                // 4. Успех - сохраняем данные
+                this.feedsManager.addFeed(feed);
+                this.postsManager.addPosts(posts);
 
-            this.feedsManager.addFeed(feed);
-            this.postsManager.addPosts(posts);
-
-            this.messageView.show('messages.feedAdded', 'success');
-            this.formView.clear();
-            this.formView.focus();
-        } catch (error) {
-            if (error.message?.startsWith('errors.')) {
-                if (
-                    error.message === 'errors.urlRequired' ||
-                    error.message === 'errors.urlInvalid' ||
-                    error.message === 'errors.duplicate'
-                ) {
-                    this.formView.showError();
+                this.messageView.show('messages.feedAdded', 'success');
+                this.formView.clear();
+                this.formView.focus();
+            })
+            .catch((error) => {
+                // 5. Обработка ошибок
+                if (error.message?.startsWith('errors.')) {
+                    if (
+                        ['errors.urlRequired', 'errors.urlInvalid', 'errors.duplicate'].includes(
+                            error.message
+                        )
+                    ) {
+                        this.formView.showError();
+                    }
+                    this.messageView.show(error.message, 'danger');
+                } else {
+                    this.messageView.show('errors.unknown', 'danger');
                 }
-                this.messageView.show(error.message, 'danger');
-            } else {
-                this.messageView.show('errors.unknown', 'danger');
-            }
-        } finally {
-            this.formView.setLoading(false);
-        }
+            })
+            .finally(() => {
+                // 6. Всегда убираем загрузку
+                this.formView.setLoading(false);
+            });
     }
 
     handleFeedClick(id) {
