@@ -1,133 +1,120 @@
 <!doctype html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RSS агрегатор</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-  </head>
-  <body>
-    <div class="container mt-5">
-      <h1 class="text-center mb-4">RSS агрегатор</h1>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>RSS агрегатор</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        />
+    </head>
+    <body>
+        <div class="container mt-5">
+            <h1 class="text-center mb-4">RSS агрегатор</h1>
 
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <!-- Контейнер для сообщений -->
-          <div id="messages-container" class="mb-2"></div>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <!-- Контейнер для сообщений -->
+                    <div id="messages-container" class="mb-2"></div>
 
-          <form id="rss-form" class="mb-3">
-            <div class="input-group">
-              <input
-                id="rss-input"
-                class="form-control"
-                placeholder="Ссылка RSS"
-                aria-label="RSS URL"
-              />
-              <button class="btn btn-primary" type="submit">Добавить</button>
+                    <form id="rss-form" class="mb-3">
+                        <div class="input-group">
+                            <input
+                                id="rss-input"
+                                class="form-control"
+                                placeholder="Ссылка RSS"
+                                aria-label="RSS URL"
+                            />
+                            <button class="btn btn-primary" type="submit">Добавить</button>
+                        </div>
+                        <div class="text-muted mb-2 small">
+                            Пример: https://news.ycombinator.com/rss
+                        </div>
+                    </form>
+
+                    <!-- Список фидов -->
+                    <div id="feeds" class="list-group"></div>
+
+                    <!-- Контейнер для постов (скрыт по умолчанию) -->
+                    <div id="posts-container" class="mt-4" style="display: none"></div>
+                </div>
             </div>
-            <div class="text-muted mb-2 small">
-              Пример: https://news.ycombinator.com/rss
-            </div>
-          </form>
-
-          <!-- Список фидов -->
-          <div id="feeds" class="list-group"></div>
-
-          <!-- Контейнер для постов (скрыт по умолчанию) -->
-          <div id="posts-container" class="mt-4" style="display: none"></div>
         </div>
-      </div>
-    </div>
 
-    <!-- ШАБЛОНЫ (скрыты, не отображаются) -->
-    <template id="feed-template">
-      <a href="#" class="list-group-item list-group-item-action feed-item">
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="flex-grow-1">
-            <div class="d-flex align-items-center mb-1">
-              <i
-                class="fas fa-rss text-warning me-2"
-                style="font-size: 1.1rem"
-              ></i>
-              <span class="feed-title"></span>
-            </div>
-            <!-- ✅ ДОБАВЛЯЕМ ОПИСАНИЕ -->
-            <p class="feed-description text-muted small mb-2"></p>
-            <div class="feed-meta ms-4">
-              <i class="fas fa-calendar-alt me-1"></i>
-              <span class="feed-date"></span>
-              <i class="fas fa-file-text ms-3 me-1"></i>
-              <span class="feed-posts-count">0</span> постов
-            </div>
-          </div>
-          <div class="ms-3">
-            <span class="badge bg-primary rounded-pill">
-              <i class="fas fa-chevron-right"></i>
-            </span>
-          </div>
-        </div>
-      </a>
-    </template>
+        <!-- ШАБЛОНЫ (скрыты, не отображаются) -->
+        <template id="feed-template">
+            <a href="#" class="list-group-item list-group-item-action feed-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center mb-1">
+                            <i class="fas fa-rss text-warning me-2" style="font-size: 1.1rem"></i>
+                            <span class="feed-title"></span>
+                        </div>
+                        <!-- ✅ ДОБАВЛЯЕМ ОПИСАНИЕ -->
+                        <p class="feed-description text-muted small mb-2"></p>
+                        <div class="feed-meta ms-4">
+                            <i class="fas fa-calendar-alt me-1"></i>
+                            <span class="feed-date"></span>
+                            <i class="fas fa-file-text ms-3 me-1"></i>
+                            <span class="feed-posts-count">0</span> постов
+                        </div>
+                    </div>
+                    <div class="ms-3">
+                        <span class="badge bg-primary rounded-pill">
+                            <i class="fas fa-chevron-right"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </template>
 
-    <template id="post-template">
-      <a
-        href="#"
-        class="list-group-item list-group-item-action"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <div class="d-flex w-100 justify-content-between">
-          <h6 class="mb-1 post-title"></h6>
-          <small class="text-muted post-date"></small>
-        </div>
-        <p class="mb-1 text-muted small post-description"></p>
-      </a>
-    </template>
-
-    <template id="posts-header-template">
-      <h5 class="mb-3">
-        <i class="fas fa-newspaper me-2 text-primary"></i>
-        Посты из фида "<span class="feed-title"></span>"
-      </h5>
-      <div class="list-group posts-list"></div>
-    </template>
-    <div class="modal fade" id="postModal" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title"></h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <p class="post-description"></p>
-          </div>
-          <div class="modal-footer">
-            <a href="#" class="btn btn-primary" target="_blank"
-              >Читать полностью</a
+        <template id="post-template">
+            <a
+                href="#"
+                class="list-group-item list-group-item-action"
+                target="_blank"
+                rel="noopener noreferrer"
             >
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Закрыть
-            </button>
-          </div>
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1 post-title"></h6>
+                    <small class="text-muted post-date"></small>
+                </div>
+                <p class="mb-1 text-muted small post-description"></p>
+            </a>
+        </template>
+
+        <template id="posts-header-template">
+            <h5 class="mb-3">
+                <i class="fas fa-newspaper me-2 text-primary"></i>
+                Посты из фида "<span class="feed-title"></span>"
+            </h5>
+            <div class="list-group posts-list"></div>
+        </template>
+        <div class="modal fade" id="postModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="post-description"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="#" class="btn btn-primary" target="_blank">Читать полностью</a>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Закрыть
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script type="module" src="/src/main.js"></script>
+    </body>
 </html>

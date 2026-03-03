@@ -1,34 +1,42 @@
+// locales/index.js
 export default {
-  ru: {
-    translation: {
-      // Заголовки
-      appTitle: 'RSS агрегатор',
+    ru: {
+        translation: {
+            appTitle: 'RSS агрегатор',
 
-      // Форма
-      form: {
-        placeholder: 'Ссылка RSS',
-        addButton: 'Добавить',
-      },
+            sections: {
+                feeds: 'Фиды',
+                posts: 'Посты',
+            },
 
-      // Ошибки валидации (для Yup)
-      errors: {
-        urlRequired: 'URL не может быть пустым',
-        urlInvalid: 'Пожалуйста, введите корректный URL',
-        duplicate: 'Этот RSS уже существует',
-        notRss: 'URL должен содержать rss, feed или xml',
-        timeout: 'Превышено время ожидания. Сервер не отвечает', // ← добавил!
-        network: 'Ошибка сети. Проверьте подключение к интернету', // ← добавил!
-        invalidRss: 'Неверный формат RSS', // ← добавил!
-        unknown: 'Неизвестная ошибка. Попробуйте позже', // ← добавил!
-      },
+            form: {
+                placeholder: 'Ссылка RSS',
+                addButton: 'Добавить',
+            },
 
-      // Сообщения
-      messages: {
-        feedAdded: 'RSS лента успешно добавлена',
-      },
+            errors: {
+                urlRequired: 'Не должно быть пустым',
+                urlInvalid: 'Ссылка должна быть валидным URL',
+                duplicate: 'RSS уже существует',
+                notRss: 'URL должен содержать rss, feed или xml',
+                timeout: 'Превышено время ожидания. Сервер не отвечает',
+                network: 'Ошибка сети',
+                invalidRss: 'Ресурс не содержит валидный RSS',
+                proxyUnavailable: '⚠️ Сервис временно недоступен. Попробуйте позже',
+                tooManyRequests: '⚠️ Слишком много запросов. Подождите немного',
+                unknown: 'Неизвестная ошибка. Попробуйте позже',
+            },
 
-      // Состояния загрузки
-      loading: 'Загрузка...',
+            messages: {
+                feedAdded: 'RSS успешно загружен',
+            },
+
+            modal: {
+                close: 'Закрыть',
+                readFull: 'Читать полностью',
+            },
+
+            loading: 'Загрузка...',
+        },
     },
-  },
 };
