@@ -197,6 +197,6 @@ class AppController extends Controller {
 
 export const initApp = () => {
     document.addEventListener('DOMContentLoaded', () => {
-        window.app = new AppController();
+        // window.app = new AppController();
     });
 };
