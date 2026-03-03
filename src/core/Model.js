@@ -1,37 +1,47 @@
 // core/Model.js
+import { proxy, subscribe, snapshot } from 'valtio/vanilla';
+
 export default class Model {
-  constructor(initialState = {}) {
-    this.state = { ...initialState };
-    this.subscribers = [];
-  }
+    constructor(initialState = {}) {
+        // Создаем реактивное состояние через proxy
+        this.state = proxy(initialState);
+        this.subscribers = [];
 
-  subscribe(callback) {
-    this.subscribers.push(callback);
-    callback(this.state);
-    return () => this.unsubscribe(callback);
-  }
+        // Подписываемся на изменения состояния
+        subscribe(this.state, () => {
+            const snap = snapshot(this.state);
+            this.notify(snap);
+        });
+    }
 
-  unsubscribe(callback) {
-    this.subscribers = this.subscribers.filter(cb => cb !== callback);
-  }
+    subscribe(callback) {
+        this.subscribers.push(callback);
+        // Сразу вызываем с текущим состоянием
+        callback(snapshot(this.state));
+        return () => this.unsubscribe(callback);
+    }
 
-  setState(newState) {
-    const prevState = { ...this.state };
-    this.state = { ...this.state, ...newState };
-    this.notify(prevState);
-  }
+    unsubscribe(callback) {
+        this.subscribers = this.subscribers.filter((cb) => cb !== callback);
+    }
 
-  notify(prevState) {
-    this.subscribers.forEach(callback => {
-      try {
-        callback(this.state, prevState);
-      } catch (error) {
-        console.error('Error in subscriber:', error);
-      }
-    });
-  }
+    setState(newState) {
+        // В Valtio мы мутируем состояние напрямую
+        Object.assign(this.state, newState);
+        // notify вызывается автоматически через subscribe
+    }
 
-  getState() {
-    return { ...this.state };
-  }
+    notify(state) {
+        this.subscribers.forEach((callback) => {
+            try {
+                callback(state);
+            } catch (error) {
+                console.error('Error in subscriber:', error);
+            }
+        });
+    }
+
+    getState() {
+        return snapshot(this.state);
+    }
 }
