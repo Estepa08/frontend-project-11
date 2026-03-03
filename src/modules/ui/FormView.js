@@ -1,4 +1,3 @@
-// modules/ui/FormView.js
 import i18next from 'i18next';
 import View from '../../core/View.js';
 
@@ -40,16 +39,13 @@ export default class FormView extends View {
     }
 
     setLanguageTexts() {
-        // Текст кнопки и placeholder
         this.input.placeholder = i18next.t('form.placeholder');
         this.submitButton.textContent = i18next.t('form.addButton');
 
-        // 👇 ДОБАВЛЯЕМ ТЕКСТ ЛЕЙБЛА
         if (this.label) {
             this.label.textContent = i18next.t('form.label');
         }
 
-        // 👇 ДОБАВЛЯЕМ ТЕКСТ ПРИМЕРА
         if (this.exampleEl) {
             this.exampleEl.textContent = i18next.t('form.example');
         }

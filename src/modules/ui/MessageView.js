@@ -1,4 +1,3 @@
-// modules/ui/MessageView.js
 import i18next from 'i18next';
 import View from '../../core/View.js';
 import { MESSAGE_DISPLAY_TIME } from '../../utils/constants.js';

@@ -1,4 +1,3 @@
-// app/config.js
 import { PROXY_TIMEOUT, PROXY_URL } from '../utils/constants.js';
 
 export default {

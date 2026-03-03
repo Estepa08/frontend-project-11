@@ -1,4 +1,3 @@
-// modules/posts/PostsView.js
 import i18next from 'i18next';
 import View from '../../core/View.js';
 import { MAX_POST_DESCRIPTION_LENGTH } from '../../utils/constants.js';
@@ -45,7 +44,6 @@ export default class PostsView extends View {
     render(posts) {
         this.clear();
 
-        // Удаляем существующий заголовок в ЭТОЙ колонке
         const existingHeader = this.container.parentNode.querySelector('h2');
         if (existingHeader) {
             existingHeader.remove();
@@ -56,7 +54,6 @@ export default class PostsView extends View {
             return;
         }
 
-        // Создаем заголовок "Посты" прямо перед контейнером
         const header = document.createElement('h2');
         header.setAttribute('data-i18n', 'sections.posts');
         header.textContent = i18next.t('sections.posts');
@@ -67,7 +64,6 @@ export default class PostsView extends View {
     }
 
     renderPosts(posts) {
-        // Сортируем посты по дате (новые сверху)
         const sortedPosts = [...posts].sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 
         sortedPosts.forEach((post) => this.renderPost(post));
@@ -76,35 +72,28 @@ export default class PostsView extends View {
     renderPost(post) {
         const clone = this.postTemplate.content.cloneNode(true);
 
-        // Находим ссылку и заполняем
         const link = clone.querySelector('a');
         link.href = post.link;
         link.setAttribute('target', '_blank');
         link.setAttribute('rel', 'noopener noreferrer');
         link.classList.add(post.isRead ? 'fw-normal' : 'fw-bold');
 
-        // Заголовок поста
         const titleEl = link.querySelector('.post-title');
         if (titleEl) titleEl.textContent = post.title;
 
-        // Дата поста
         const dateEl = link.querySelector('.post-date');
         if (dateEl) dateEl.textContent = formatDate(post.pubDate);
 
-        // Описание поста (если есть)
         const descEl = link.querySelector('.post-description');
         if (descEl && post.description) {
             descEl.textContent = truncate(post.description, MAX_POST_DESCRIPTION_LENGTH);
         }
 
-        // Создаем контейнер для поста с кнопкой
         const container = document.createElement('div');
         container.className = 'd-flex align-items-center mb-2';
 
-        // Добавляем ссылку
         container.appendChild(link);
 
-        // Добавляем кнопку предпросмотра
         const previewBtn = document.createElement('button');
         previewBtn.className = 'btn btn-sm btn-outline-primary ms-2 preview-btn';
         previewBtn.textContent = i18next.t('modal.preview');

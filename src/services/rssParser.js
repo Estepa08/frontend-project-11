@@ -1,4 +1,3 @@
-// services/rssParser.js
 export default function parseRss(xmlText, sourceUrl) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(xmlText, 'application/xml');

@@ -1,4 +1,3 @@
-// utils/constants.js
 export const MESSAGE_DISPLAY_TIME = 5000;
 export const PROXY_TIMEOUT = 15000;
 export const PROXY_URL = 'https://allorigins.hexlet.app';

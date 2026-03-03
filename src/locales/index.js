@@ -1,4 +1,3 @@
-// locales/index.js
 export default {
     ru: {
         translation: {
@@ -13,7 +12,7 @@ export default {
                 label: 'Начните читать RSS сегодня! Это легко, это красиво',
                 placeholder: 'Ссылка RSS',
                 addButton: 'Добавить',
-                example: 'Пример: https://news.ycombinator.com/rss',
+                example: 'Пример: https://lorem-rss.hexlet.app/feed',
             },
 
             feeds: {
@@ -43,8 +42,8 @@ export default {
 
             modal: {
                 close: 'Закрыть',
-                preview: 'Просмотр', // 👈 для кнопки предпросмотра
-                readFull: 'Читать полностью', // 👈 для ссылки в модалке
+                preview: 'Просмотр',
+                readFull: 'Читать полностью',
             },
 
             loading: 'Загрузка...',

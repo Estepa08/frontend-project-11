@@ -1,4 +1,3 @@
-// modules/feeds/FeedsManager.js
 import Model from '../../core/Model.js';
 
 export default class FeedsManager extends Model {

@@ -1,4 +1,3 @@
-// modules/ui/LoaderView.js
 import View from '../../core/View.js';
 
 export default class LoaderView extends View {

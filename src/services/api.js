@@ -1,4 +1,3 @@
-// services/api.js
 import axios from 'axios';
 
 const PROXY_URL = 'https://allorigins.hexlet.app';

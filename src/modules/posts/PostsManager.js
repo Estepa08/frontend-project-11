@@ -1,4 +1,3 @@
-// modules/posts/PostsManager.js
 import Model from '../../core/Model.js';
 
 export default class PostsManager extends Model {

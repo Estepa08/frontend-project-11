@@ -1,4 +1,3 @@
-// core/View.js
 export default class View {
     constructor(container, options = {}) {
         if (!container) throw new Error('Container is required');

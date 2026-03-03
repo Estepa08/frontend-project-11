@@ -1,4 +1,3 @@
-// services/validator.js
 import * as yup from 'yup';
 
 export const urlSchema = yup

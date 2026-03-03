@@ -1,4 +1,3 @@
-// app/init.js (исправленная версия)
 import i18next from 'i18next';
 import * as yup from 'yup';
 import Controller from '../core/Controller.js';
@@ -33,7 +32,6 @@ class AppController extends Controller {
         this.postsView = new PostsView(
             document.getElementById('posts-container'),
             document.getElementById('post-template')
-            // 👆 УБРАЛИ ТРЕТИЙ ПАРАМЕТР
         );
         this.messageView = new MessageView(document.getElementById('messages-container'));
 
@@ -62,9 +60,6 @@ class AppController extends Controller {
                 this.formView.init();
                 this.formView.onSubmit(this.handleSubmit.bind(this));
 
-                // 👇 УБИРАЕМ onFeedClick - он больше не нужен
-                // this.feedsView.onFeedClick(this.handleFeedClick.bind(this));
-
                 if (this.postsView && typeof this.postsView.onPreviewClick === 'function') {
                     this.postsView.onPreviewClick(this.handlePreview.bind(this));
                 }
@@ -73,7 +68,6 @@ class AppController extends Controller {
                     this.feedsView.render(state.feeds);
                 });
 
-                // 👇 ДОБАВЛЯЕМ подписку на посты
                 this.postsManager.subscribe(() => {
                     const allPosts = this.postsManager.getAllPosts();
                     this.postsView.render(allPosts);
@@ -197,6 +191,6 @@ class AppController extends Controller {
 
 export const initApp = () => {
     document.addEventListener('DOMContentLoaded', () => {
-        // window.app = new AppController();
+        new AppController();
     });
 };

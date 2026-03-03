@@ -1,4 +1,3 @@
-// modules/feeds/FeedsView.js
 import i18next from 'i18next';
 import View from '../../core/View.js';
 import { MAX_DESCRIPTION_LENGTH } from '../../utils/constants.js';
@@ -27,7 +26,6 @@ export default class FeedsView extends View {
     render(feeds) {
         this.clear();
 
-        // Удаляем существующий заголовок в ЭТОЙ колонке
         const existingHeader = this.container.parentNode.querySelector('h2');
         if (existingHeader) {
             existingHeader.remove();
@@ -37,7 +35,6 @@ export default class FeedsView extends View {
             return;
         }
 
-        // Создаем заголовок "Фиды" прямо перед контейнером
         const header = document.createElement('h2');
         header.setAttribute('data-i18n', 'sections.feeds');
         header.textContent = i18next.t('sections.feeds');
