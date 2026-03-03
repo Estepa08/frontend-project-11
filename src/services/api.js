@@ -15,7 +15,6 @@ export const fetchRss = (url) => {
     return apiClient
         .get(`/raw?url=${encodedUrl}&disableCache=true`)
         .then((response) => {
-            console.log('✅ RSS загружен через прокси');
             if (typeof response.data !== 'string') {
                 throw new Error('errors.network');
             }

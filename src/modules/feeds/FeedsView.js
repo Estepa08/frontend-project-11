@@ -25,28 +25,16 @@ export default class FeedsView extends View {
     }
 
     render(feeds) {
-        console.log('🎨 FeedsView.render вызван, feeds:', feeds);
-        console.log('📦 this.container:', this.container);
-        console.log('📋 this.template:', this.template);
-
         this.clear();
-        console.log('🧹 После clear, container.innerHTML:', this.container.innerHTML);
 
         if (!feeds || feeds.length === 0) {
-            console.log('⚠️ Нет фидов для отображения');
             return;
         }
 
-        console.log(`🔄 Рендерим ${feeds.length} фидов`);
-
-        feeds.forEach((feed, index) => {
-            console.log(`📌 Фид ${index}:`, feed);
-
+        feeds.forEach((feed) => {
             const clone = this.template.content.cloneNode(true);
-            console.log('📋 Клон создан');
 
             const item = clone.querySelector('a');
-            console.log('🔗 Элемент a найден:', item);
 
             item.dataset.id = feed.id;
             item.querySelector('.feed-title').textContent = feed.title || feed.url;
@@ -58,10 +46,7 @@ export default class FeedsView extends View {
             item.querySelector('.feed-posts-count').textContent = feed.postCount || 0;
 
             this.container.appendChild(clone);
-            console.log(`✅ Фид ${index} добавлен в DOM`);
         });
-
-        console.log('🏁 После рендера, container.innerHTML:', this.container.innerHTML);
     }
 
     showEmpty() {

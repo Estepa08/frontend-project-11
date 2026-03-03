@@ -4,26 +4,36 @@ export default {
         translation: {
             appTitle: 'RSS агрегатор',
 
+            sections: {
+                feeds: 'Фиды',
+                posts: 'Посты',
+            },
+
             form: {
                 placeholder: 'Ссылка RSS',
                 addButton: 'Добавить',
             },
 
             errors: {
-                urlRequired: 'URL не может быть пустым',
-                urlInvalid: 'Пожалуйста, введите корректный URL',
-                duplicate: 'Этот RSS уже существует',
+                urlRequired: 'Не должно быть пустым',
+                urlInvalid: 'Ссылка должна быть валидным URL',
+                duplicate: 'RSS уже существует',
                 notRss: 'URL должен содержать rss, feed или xml',
                 timeout: 'Превышено время ожидания. Сервер не отвечает',
-                network: 'Ошибка сети. Проверьте подключение к интернету',
-                invalidRss: 'Неверный формат RSS',
+                network: 'Ошибка сети',
+                invalidRss: 'Ресурс не содержит валидный RSS',
                 proxyUnavailable: '⚠️ Сервис временно недоступен. Попробуйте позже',
                 tooManyRequests: '⚠️ Слишком много запросов. Подождите немного',
                 unknown: 'Неизвестная ошибка. Попробуйте позже',
             },
 
             messages: {
-                feedAdded: 'RSS лента успешно добавлена',
+                feedAdded: 'RSS успешно загружен',
+            },
+
+            modal: {
+                close: 'Закрыть',
+                readFull: 'Читать полностью',
             },
 
             loading: 'Загрузка...',

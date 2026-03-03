@@ -60,13 +60,10 @@ class AppController extends Controller {
         // ✅ Правильно: вызываем метод postsView.onPreviewClick
         if (this.postsView && typeof this.postsView.onPreviewClick === 'function') {
             this.postsView.onPreviewClick(this.handlePreview.bind(this));
-            console.log('✅ Подписка на preview добавлена');
         } else {
-            console.warn('⚠️ postsView.onPreviewClick не доступен', this.postsView);
         }
 
         this.feedsManager.subscribe((state) => {
-            console.log('🔄 Фиды обновлены:', state.feeds);
             this.feedsView.render(state.feeds);
         });
 
@@ -84,9 +81,7 @@ class AppController extends Controller {
             for (const feed of feeds) {
                 try {
                     await this.checkFeedUpdates(feed);
-                } catch (error) {
-                    console.error(`Ошибка обновления ${feed.url}:`, error);
-                }
+                } catch {}
             }
 
             this.isUpdating = false;
@@ -126,8 +121,6 @@ class AppController extends Controller {
                 this.updateView();
             }
         } catch (error) {
-            console.error(`Ошибка обновления ${feed.url}:`, error);
-
             if (!this.lastProxyError || Date.now() - this.lastProxyError > 60000) {
                 if (error.message === 'errors.proxyUnavailable') {
                     this.messageView.show('errors.proxyUnavailable', 'warning');
@@ -164,8 +157,6 @@ class AppController extends Controller {
             this.formView.clear();
             this.formView.focus();
         } catch (error) {
-            console.error('Ошибка:', error);
-
             if (error.message?.startsWith('errors.')) {
                 if (
                     error.message === 'errors.urlRequired' ||
@@ -192,12 +183,9 @@ class AppController extends Controller {
     }
 
     handlePreview(postId) {
-        console.log('handlePreview получил postId:', postId, 'тип:', typeof postId);
-
         const post = this.postsManager.getPostById(postId);
 
         if (!post) {
-            console.error('Пост не найден:', postId);
             return;
         }
 
@@ -220,6 +208,5 @@ class AppController extends Controller {
 export const initApp = () => {
     document.addEventListener('DOMContentLoaded', () => {
         window.app = new AppController();
-        console.log('✅ RSS Aggregator запущен!');
     });
 };

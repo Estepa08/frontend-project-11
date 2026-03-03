@@ -31,7 +31,6 @@ export default class PostsView extends View {
             this.modalDescription = modalElement.querySelector('.modal-body .post-description');
             this.modalLink = modalElement.querySelector('.btn-primary');
         } else {
-            console.error('Модальное окно с id="postModal" не найдено в HTML');
         }
     }
 
@@ -83,8 +82,6 @@ export default class PostsView extends View {
     }
 
     renderPost(post, container) {
-        console.log('🎨 Рендерим пост:', post); // 👈 ПОСМОТРИМ ВЕСЬ ОБЪЕКТ
-
         const clone = this.postTemplate.content.cloneNode(true);
         const wrapper = document.createElement('div');
         wrapper.className = 'd-flex align-items-center mb-2';
@@ -111,7 +108,6 @@ export default class PostsView extends View {
         previewBtn.className = 'btn btn-sm btn-outline-primary ms-2 preview-btn';
         previewBtn.textContent = 'Просмотр';
         previewBtn.dataset.postId = post.id;
-        console.log('🔘 Устанавливаем data-postId =', post.id, 'тип:', typeof post.id); // 👈 ПРОВЕРЯЕМ
 
         wrapper.appendChild(link);
         wrapper.appendChild(previewBtn);
@@ -120,7 +116,6 @@ export default class PostsView extends View {
 
     showPreview(post) {
         if (!this.modal) {
-            console.error('Модальное окно не инициализировано');
             return;
         }
 
