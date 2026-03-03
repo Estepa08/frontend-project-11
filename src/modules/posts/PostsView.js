@@ -107,7 +107,7 @@ export default class PostsView extends View {
         // Добавляем кнопку предпросмотра
         const previewBtn = document.createElement('button');
         previewBtn.className = 'btn btn-sm btn-outline-primary ms-2 preview-btn';
-        previewBtn.textContent = i18next.t('modal.readFull');
+        previewBtn.textContent = i18next.t('modal.preview');
         previewBtn.dataset.postId = post.id;
         container.appendChild(previewBtn);
 
@@ -118,7 +118,7 @@ export default class PostsView extends View {
         if (!this.modal) return;
 
         this.modalTitle.textContent = post.title;
-        this.modalDescription.textContent = post.description || 'Нет описания';
+        this.modalDescription.textContent = post.description || i18next.t('posts.noDescription');
         this.modalLink.href = post.link;
 
         this.modalLink.textContent = i18next.t('modal.readFull');
