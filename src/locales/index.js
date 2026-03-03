@@ -24,11 +24,6 @@ export default {
                 postsCount_many: '{{count}} постов',
             },
 
-            // 👇 ДОБАВИТЬ: для заголовка постов
-            posts: {
-                header: 'Посты из фида "{{feedTitle}}"',
-            },
-
             errors: {
                 urlRequired: 'Не должно быть пустым',
                 urlInvalid: 'Ссылка должна быть валидным URL',
@@ -48,7 +43,7 @@ export default {
 
             modal: {
                 close: 'Закрыть',
-                readFull: 'Читать полностью',
+                readFull: 'Просмотр',
             },
 
             loading: 'Загрузка...',

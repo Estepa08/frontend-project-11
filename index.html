@@ -30,7 +30,6 @@
                     <form id="rss-form" class="mb-3">
                         <div class="mb-3">
                             <label for="rss-input" class="form-label"></label>
-                            <!-- ДОБАВЛЕНО -->
                             <div class="input-group">
                                 <input
                                     id="rss-input"
@@ -38,19 +37,23 @@
                                     placeholder="Ссылка RSS"
                                     aria-label="RSS URL"
                                 />
-                                <button class="btn btn-primary" type="submit">Добавить</button>
+                                <button class="btn btn-primary" type="submit"></button>
                             </div>
                         </div>
-                        <div class="text-muted mb-2 small">
-                            Пример: https://news.ycombinator.com/rss
-                        </div>
+                        <div class="text-muted mb-2 small"></div>
                     </form>
 
-                    <!-- Список фидов -->
-                    <div id="feeds" class="list-group"></div>
-
-                    <!-- Контейнер для постов (скрыт по умолчанию) -->
-                    <div id="posts-container" class="mt-4" style="display: none"></div>
+                    <!-- Ряд с двумя колонками для фидов и постов -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!-- Заголовок "Фиды" появится здесь через JS -->
+                            <div id="feeds" class="list-group"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Заголовок "Посты" появится здесь через JS -->
+                            <div id="posts-container" style="display: none"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,7 +67,6 @@
                             <i class="fas fa-rss text-warning me-2" style="font-size: 1.1rem"></i>
                             <span class="feed-title"></span>
                         </div>
-                        <!-- ✅ ДОБАВЛЯЕМ ОПИСАНИЕ -->
                         <p class="feed-description text-muted small mb-2"></p>
                         <div class="feed-meta ms-4">
                             <i class="fas fa-calendar-alt me-1"></i>
@@ -98,12 +100,10 @@
         </template>
 
         <template id="posts-header-template">
-            <h5 class="mb-3">
-                <i class="fas fa-newspaper me-2 text-primary"></i>
-                <!-- Текст будет вставлен через JS -->
-            </h5>
             <div class="list-group posts-list"></div>
         </template>
+
+        <!-- Модальное окно для предпросмотра постов -->
         <div class="modal fade" id="postModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -115,7 +115,7 @@
                         <p class="post-description"></p>
                     </div>
                     <div class="modal-footer">
-                        <a href="#" class="btn btn-primary" target="_blank">Читать полностью</a>
+                        <a href="#" class="btn btn-primary" target="_blank"></a>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                             Закрыть
                         </button>
@@ -123,6 +123,7 @@
                 </div>
             </div>
         </div>
+
         <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"

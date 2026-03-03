@@ -8,7 +8,7 @@ export default class FormView extends View {
         this.input = container.querySelector('#rss-input');
         this.submitButton = container.querySelector('button[type="submit"]');
         this.label = document.querySelector('label[for="rss-input"]');
-        this.exampleEl = document.querySelector('.text-muted.small'); // 👈 ДОБАВИМ И ПРИМЕР
+        this.exampleEl = document.querySelector('.text-muted.small');
         this.handlers = { submit: null };
     }
 

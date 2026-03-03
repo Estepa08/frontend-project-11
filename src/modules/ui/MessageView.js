@@ -10,13 +10,6 @@ const MESSAGE_CONFIG = {
     warning: 'text-warning',
 };
 
-const EMOJI = {
-    danger: '❌ ',
-    success: '✅ ',
-    info: 'ℹ️ ',
-    warning: '⚠️ ',
-};
-
 export default class MessageView extends View {
     constructor(container) {
         super(container);

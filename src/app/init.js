@@ -54,6 +54,11 @@ class AppController extends Controller {
                     string: { url: () => i18next.t('errors.urlInvalid') },
                 });
 
+                document.querySelectorAll('[data-i18n]').forEach((el) => {
+                    const key = el.dataset.i18n;
+                    el.textContent = i18next.t(key);
+                });
+
                 this.formView.init();
                 this.formView.onSubmit(this.handleSubmit.bind(this));
                 this.feedsView.onFeedClick(this.handleFeedClick.bind(this));

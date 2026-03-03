@@ -27,15 +27,26 @@ export default class FeedsView extends View {
     render(feeds) {
         this.clear();
 
+        // Удаляем существующий заголовок в ЭТОЙ колонке
+        const existingHeader = this.container.parentNode.querySelector('h2');
+        if (existingHeader) {
+            existingHeader.remove();
+        }
+
         if (!feeds || feeds.length === 0) {
             return;
         }
 
+        // Создаем заголовок "Фиды" прямо перед контейнером
+        const header = document.createElement('h2');
+        header.setAttribute('data-i18n', 'sections.feeds');
+        header.textContent = i18next.t('sections.feeds');
+        this.container.parentNode.insertBefore(header, this.container);
+
         feeds.forEach((feed) => {
             const clone = this.template.content.cloneNode(true);
-
             const item = clone.querySelector('a');
-            const countEl = item.querySelector('.feed-posts-count'); // 👈 ЭТО БЫЛО ПРОПУЩЕНО
+            const countEl = item.querySelector('.feed-posts-count');
             const count = feed.postCount || 0;
 
             item.dataset.id = feed.id;
@@ -45,8 +56,6 @@ export default class FeedsView extends View {
                 MAX_DESCRIPTION_LENGTH
             );
             item.querySelector('.feed-date').textContent = feed.addedAt;
-
-            // 👇 ИСПОЛЬЗУЕМ i18next ДЛЯ СЧЕТЧИКА
             countEl.textContent = i18next.t('feeds.postsCount', { count });
 
             this.container.appendChild(clone);
