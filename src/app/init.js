@@ -27,11 +27,11 @@ class AppController extends Controller {
     this.formView = new FormView(document.getElementById('rss-form'))
     this.feedsView = new FeedsView(
       document.getElementById('feeds'),
-      document.getElementById('feed-template'),
+      document.getElementById('feed-template')
     )
     this.postsView = new PostsView(
       document.getElementById('posts-container'),
-      document.getElementById('post-template'),
+      document.getElementById('post-template')
     )
     this.messageView = new MessageView(document.getElementById('messages-container'))
 
@@ -102,13 +102,11 @@ class AppController extends Controller {
       .then((data) => {
         const existingPosts = this.postsManager.getPostsByFeedUrl(feed.url)
         const newPosts = data.posts.filter(
-          (newPost) => !existingPosts.some((existing) => existing.title === newPost.title),
+          (newPost) => !existingPosts.some((existing) => existing.title === newPost.title)
         )
 
         if (newPosts.length > 0) {
-          this.postsManager.addPosts(
-            newPosts.map((post) => ({ ...post, feedUrl: feed.url })),
-          )
+          this.postsManager.addPosts(newPosts.map((post) => ({ ...post, feedUrl: feed.url })))
 
           this.feedsManager.updateFeed(feed.id, {
             postCount: (feed.postCount || 0) + newPosts.length,

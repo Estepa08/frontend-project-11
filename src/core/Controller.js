@@ -5,13 +5,13 @@ export default class Controller {
     this.unsubscribe = null
 
     if (this.model && typeof this.model.subscribe === 'function') {
-      this.unsubscribe = this.model.subscribe((state, _prevState) => {
-        this.handleModelChange(state, _prevState)
+      this.unsubscribe = this.model.subscribe((state) => {
+        this.handleModelChange(state)
       })
     }
   }
 
-  handleModelChange(state, _prevState) {
+  handleModelChange(state) {
     if (this.view && typeof this.view.render === 'function') {
       this.view.render(state)
     }

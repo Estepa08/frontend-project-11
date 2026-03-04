@@ -26,14 +26,14 @@ export default class FeedsManager extends Model {
 
   updateFeed(id, updatedData) {
     const feeds = this.state.feeds.map((feed) =>
-      feed.id === id ? { ...feed, ...updatedData } : feed,
+      feed.id === id ? { ...feed, ...updatedData } : feed
     )
     this.setState({ feeds })
   }
 
   updatePostCount(feedId, count) {
     const feeds = this.state.feeds.map((feed) =>
-      feed.id === feedId ? { ...feed, postCount: count } : feed,
+      feed.id === feedId ? { ...feed, postCount: count } : feed
     )
     this.setState({ feeds })
   }

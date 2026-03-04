@@ -1,34 +1,45 @@
 import globals from 'globals'
+import js from '@eslint/js'
+import prettier from 'eslint-config-prettier'
+import prettierPlugin from 'eslint-plugin-prettier'
 
 export default [
+  js.configs.recommended,
+  prettier, // отключает правила ESLint, конфликтующие с Prettier
   {
-    ignores: ['dist/**', 'node_modules/**', 'coverage/**'],
-  },
-  {
-    files: ['**/*.js'],
+    files: ['**/*.{js,jsx}'],
     languageOptions: {
-      ecmaVersion: 2022,
+      ecmaVersion: 'latest',
       sourceType: 'module',
       globals: {
         ...globals.browser,
         ...globals.node,
+        ...globals.jest,
       },
     },
+    plugins: {
+      prettier: prettierPlugin,
+    },
     rules: {
-      'no-unused-vars': [
+      'prettier/prettier': [
         'error',
+        {
+          semi: false,
+          singleQuote: true,
+          tabWidth: 2,
+          trailingComma: 'es5',
+          printWidth: 100,
+          endOfLine: 'auto',
+        },
+      ],
+      'no-unused-vars': [
+        'warn',
         {
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
         },
       ],
       'no-console': 'off',
-      semi: ['error', 'never'], // ← запрещаем точки с запятой
-      indent: ['error', 2],
-      quotes: ['error', 'single'],
-      'comma-dangle': ['error', 'always-multiline'],
-      'no-trailing-spaces': 'error',
-      'eol-last': ['error', 'always'],
     },
   },
 ]
