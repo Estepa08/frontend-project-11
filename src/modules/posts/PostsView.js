@@ -21,7 +21,7 @@ export default class PostsView extends View {
         super(container);
         this.postTemplate = postTemplate;
 
-        const modalElement = document.getElementById('postModal');
+        const modalElement = document.getElementById('modal');
         if (modalElement && window.bootstrap) {
             this.modal = new window.bootstrap.Modal(modalElement);
             this.modalTitle = modalElement.querySelector('.modal-title');
