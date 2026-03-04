@@ -1,58 +1,58 @@
 export default class View {
-    constructor(container, options = {}) {
-        if (!container) throw new Error('Container is required');
+  constructor(container, options = {}) {
+    if (!container) throw new Error('Container is required')
 
-        this.container = container;
-        this.template = options.template;
-        this.handlers = {};
+    this.container = container
+    this.template = options.template
+    this.handlers = {}
+  }
+
+  on(event, selector, handler) {
+    if (!this.handlers[event]) {
+      this.handlers[event] = []
+
+      this.container.addEventListener(event, (e) => {
+        this.handlers[event].forEach(({ selector, handler }) => {
+          if (!selector || e.target.closest(selector)) {
+            handler(e)
+          }
+        })
+      })
     }
 
-    on(event, selector, handler) {
-        if (!this.handlers[event]) {
-            this.handlers[event] = [];
+    this.handlers[event].push({ selector, handler })
+    return this
+  }
 
-            this.container.addEventListener(event, (e) => {
-                this.handlers[event].forEach(({ selector, handler }) => {
-                    if (!selector || e.target.closest(selector)) {
-                        handler(e);
-                    }
-                });
-            });
-        }
+  clear() {
+    this.container.innerHTML = ''
+  }
 
-        this.handlers[event].push({ selector, handler });
-        return this;
+  render(data) {
+    if (this.template) {
+      if (this.template instanceof HTMLTemplateElement) {
+        this.container.innerHTML = ''
+        const clone = this.template.content.cloneNode(true)
+        this.container.appendChild(clone)
+      } else if (typeof this.template === 'function') {
+        this.container.innerHTML = this.template(data)
+      }
     }
+  }
 
-    clear() {
-        this.container.innerHTML = '';
-    }
+  show() {
+    this.container.style.display = ''
+  }
 
-    render(data) {
-        if (this.template) {
-            if (this.template instanceof HTMLTemplateElement) {
-                this.container.innerHTML = '';
-                const clone = this.template.content.cloneNode(true);
-                this.container.appendChild(clone);
-            } else if (typeof this.template === 'function') {
-                this.container.innerHTML = this.template(data);
-            }
-        }
-    }
+  hide() {
+    this.container.style.display = 'none'
+  }
 
-    show() {
-        this.container.style.display = '';
-    }
+  addClass(className) {
+    this.container.classList.add(className)
+  }
 
-    hide() {
-        this.container.style.display = 'none';
-    }
-
-    addClass(className) {
-        this.container.classList.add(className);
-    }
-
-    removeClass(className) {
-        this.container.classList.remove(className);
-    }
+  removeClass(className) {
+    this.container.classList.remove(className)
+  }
 }

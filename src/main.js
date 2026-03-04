@@ -1,6 +1,6 @@
-import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { initApp } from './app/init.js';
-import './style.css';
+import 'bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import { initApp } from './app/init.js'
+import './style.css'
 
-initApp();
+initApp()
