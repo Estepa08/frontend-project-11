@@ -1,4 +1,4 @@
-import globals from 'globals';
+import globals from 'globals'
 
 export default [
   {
@@ -15,7 +15,6 @@ export default [
       },
     },
     rules: {
-      // Ошибки
       'no-unused-vars': [
         'error',
         {
@@ -24,9 +23,7 @@ export default [
         },
       ],
       'no-console': 'off',
-
-      // Стиль (добавляем)
-      semi: ['error', 'always'],
+      semi: ['error', 'never'], // ← запрещаем точки с запятой
       indent: ['error', 2],
       quotes: ['error', 'single'],
       'comma-dangle': ['error', 'always-multiline'],
@@ -34,4 +31,4 @@ export default [
       'eol-last': ['error', 'always'],
     },
   },
-];
+]
