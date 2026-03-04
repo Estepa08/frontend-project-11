@@ -66,8 +66,9 @@ export default class PostsView extends View {
         console.log('📝 Класс:', post.isRead ? 'fw-normal' : 'fw-bold');
 
         const clone = this.postTemplate.content.cloneNode(true);
+        const li = clone.querySelector('li'); // берём li из шаблона
 
-        const link = clone.querySelector('a');
+        const link = li.querySelector('a');
         link.href = post.link;
         link.setAttribute('target', '_blank');
         link.setAttribute('rel', 'noopener noreferrer');
@@ -84,18 +85,10 @@ export default class PostsView extends View {
             descEl.textContent = truncate(post.description, MAX_POST_DESCRIPTION_LENGTH);
         }
 
-        const container = document.createElement('div');
-        container.className = 'd-flex align-items-center mb-2';
-
-        container.appendChild(link);
-
-        const previewBtn = document.createElement('button');
-        previewBtn.className = 'btn btn-sm btn-outline-primary ms-2 preview-btn';
-        previewBtn.textContent = i18next.t('modal.preview');
+        const previewBtn = li.querySelector('.preview-btn');
         previewBtn.dataset.postId = post.id;
-        container.appendChild(previewBtn);
 
-        this.container.appendChild(container);
+        this.container.appendChild(li);
     }
 
     showPreview(post) {

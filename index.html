@@ -81,18 +81,18 @@
         </template>
 
         <template id="post-template">
-            <a
-                href="#"
-                class="list-group-item list-group-item-action"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1 post-title"></h6>
-                    <small class="text-muted post-date"></small>
-                </div>
-                <p class="mb-1 text-muted small post-description"></p>
-            </a>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <a href="#" class="flex-grow-1" target="_blank" rel="noopener noreferrer">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1 post-title"></h6>
+                        <small class="text-muted post-date"></small>
+                    </div>
+                    <p class="mb-1 text-muted small post-description"></p>
+                </a>
+                <button type="button" class="btn btn-sm btn-outline-primary preview-btn">
+                    Просмотр
+                </button>
+            </li>
         </template>
 
         <template id="posts-header-template">
