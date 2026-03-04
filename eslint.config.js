@@ -4,7 +4,6 @@ import { defineConfig } from 'eslint/config'
 import stylistic from '@stylistic/eslint-plugin'
 
 export default defineConfig([
-  // 👇 ИГНОРИРУЕМ СБОРКУ
   {
     ignores: ['dist/**', 'node_modules/**', 'coverage/**', 'public/**'],
   },
@@ -15,7 +14,7 @@ export default defineConfig([
     extends: ['js/recommended'],
     languageOptions: {
       globals: {
-        ...globals.browser, // ← ДОБАВЛЯЕМ BROWSER (document, window, DOMParser)
+        ...globals.browser,
         ...globals.node,
         ...globals.jest,
       },

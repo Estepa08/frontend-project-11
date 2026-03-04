@@ -1,8 +1,4 @@
 export default function parseRss(xmlText, sourceUrl) {
-  console.log('📥 ===== НАЧАЛО ПАРСИНГА =====')
-  console.log('📥 URL:', sourceUrl)
-  console.log('📥 XML длина:', xmlText.length)
-  console.log('📥 Первые 200 символов XML:', xmlText.substring(0, 200))
   const parser = new DOMParser()
   const doc = parser.parseFromString(xmlText, 'application/xml')
 

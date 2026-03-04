@@ -45,8 +45,6 @@ export default class PostsView extends View {
   render(posts) {
     this.clear()
 
-    // Убираем удаление и создание заголовка - он уже есть в HTML
-
     if (!posts || posts.length === 0) {
       this.hide()
       return
@@ -63,11 +61,8 @@ export default class PostsView extends View {
   }
 
   renderPost(post) {
-    console.log('📝 Рендерим пост с заголовком:', post.title)
-    console.log('📝 Класс:', post.isRead ? 'fw-normal' : 'fw-bold')
-
     const clone = this.postTemplate.content.cloneNode(true)
-    const li = clone.querySelector('li') // берём li из шаблона
+    const li = clone.querySelector('li')
 
     const link = li.querySelector('a')
     link.href = post.link

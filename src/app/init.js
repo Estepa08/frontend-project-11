@@ -132,35 +132,24 @@ class AppController extends Controller {
   }
 
   handleSubmit(url) {
-    console.log('🚀🚀🚀 HANDLE SUBMIT ВЫЗВАН, URL:', url)
-    console.log('🚀 ЭТОТ ЛОГ ДОЛЖЕН БЫТЬ ВИДЕН В ТЕСТАХ!')
-    console.log('🔥 handleSubmit START, url:', url)
-    console.log('🔥 formView exists:', !!this.formView)
-    console.log('🔥 messageView exists:', !!this.messageView)
-
     this.formView.clearError()
     this.formView.setLoading(true)
 
     if (!url || url.trim() === '') {
-      console.log('🔥 URL пустой')
       this.formView.setLoading(false)
       this.messageView.show('errors.urlRequired', 'danger')
       this.formView.showError()
       return
     }
 
-    console.log('🔥 Валидация...')
     validateUrl(url, this.feedsManager.getState().feeds)
       .then(() => {
-        console.log('🔥 Валидация прошла')
         return fetchRss(url)
       })
       .then((xmlText) => {
-        console.log('🔥 RSS загружен, длина:', xmlText.length)
         return parseRss(xmlText, url)
       })
       .then(({ feed, posts }) => {
-        console.log('🔥 RSS распарсен, постов:', posts.length)
         this.feedsManager.addFeed(feed)
         this.postsManager.addPosts(posts)
         this.messageView.show('messages.feedAdded', 'success')
@@ -168,21 +157,14 @@ class AppController extends Controller {
         this.formView.focus()
       })
       .catch((error) => {
-        console.log('🔥 ОШИБКА В HANDLE SUBMIT')
-        console.log('🔥 error:', error)
-        console.log('🔥 error.message:', error.message)
-
         if (error.message?.startsWith('errors.')) {
-          console.log('🔥 Показываем ошибку:', error.message)
           this.messageView.show(error.message, 'danger')
         }
         else {
-          console.log('🔥 Показываем unknown')
           this.messageView.show('errors.unknown', 'danger')
         }
       })
       .finally(() => {
-        console.log('🔥 finally, убираем загрузку')
         this.formView.setLoading(false)
       })
   }
@@ -206,7 +188,7 @@ class AppController extends Controller {
 
 export const initApp = () => {
   document.addEventListener('DOMContentLoaded', () => {
-    const app = new AppController() // сохраняем в переменную
-    console.log('App initialized', app) // используем
+    const app = new AppController()
+    console.log('App initialized', app)
   })
 }
