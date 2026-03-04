@@ -132,6 +132,8 @@ class AppController extends Controller {
     }
 
     handleSubmit(url) {
+        console.log('🚀🚀🚀 HANDLE SUBMIT ВЫЗВАН, URL:', url);
+        console.log('🚀 ЭТОТ ЛОГ ДОЛЖЕН БЫТЬ ВИДЕН В ТЕСТАХ!');
         console.log('🔥 handleSubmit START, url:', url);
         console.log('🔥 formView exists:', !!this.formView);
         console.log('🔥 messageView exists:', !!this.messageView);
