@@ -234,3 +234,6 @@ h2 {
   color: #6c757d !important;
   text-decoration: none;
 }
+.section-header.hidden {
+  display: none;
+}

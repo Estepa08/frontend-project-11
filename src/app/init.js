@@ -35,8 +35,35 @@ class AppController extends Controller {
     )
     this.messageView = new MessageView(document.getElementById('messages-container'))
 
+    this.feedsHeader = document.querySelector('.feeds-header')
+    this.postsHeader = document.querySelector('.posts-header')
+
     this.init()
     this.lastProxyError = null
+  }
+
+  updateFeedsHeaderVisibility() {
+    if (!this.feedsHeader) return
+
+    const hasFeeds = this.feedsManager.getState().feeds.length > 0
+    if (hasFeeds) {
+      this.feedsHeader.classList.remove('hidden')
+    }
+    else {
+      this.feedsHeader.classList.add('hidden')
+    }
+  }
+
+  updatePostsHeaderVisibility() {
+    if (!this.postsHeader) return
+
+    const hasPosts = this.postsManager.getAllPosts().length > 0
+    if (hasPosts) {
+      this.postsHeader.classList.remove('hidden')
+    }
+    else {
+      this.postsHeader.classList.add('hidden')
+    }
   }
 
   init() {
@@ -65,13 +92,18 @@ class AppController extends Controller {
         }
 
         this.feedsManager.subscribe((state) => {
+          this.updateFeedsHeaderVisibility()
           this.feedsView.render(state.feeds)
         })
 
         this.postsManager.subscribe(() => {
+          this.updatePostsHeaderVisibility()
           const allPosts = this.postsManager.getAllPosts()
           this.postsView.render(allPosts)
         })
+
+        this.updateFeedsHeaderVisibility()
+        this.updatePostsHeaderVisibility()
 
         this.updateView()
         this.startAutoUpdate()
