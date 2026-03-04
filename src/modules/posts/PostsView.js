@@ -11,7 +11,8 @@ const truncate = (text, maxLength) => {
 const formatDate = (dateString) => {
   try {
     return new Date(dateString).toLocaleDateString()
-  } catch {
+  }
+  catch {
     return ''
   }
 }
@@ -58,7 +59,7 @@ export default class PostsView extends View {
   renderPosts(posts) {
     const sortedPosts = [...posts].sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
 
-    sortedPosts.forEach((post) => this.renderPost(post))
+    sortedPosts.forEach(post => this.renderPost(post))
   }
 
   renderPost(post) {
@@ -75,7 +76,8 @@ export default class PostsView extends View {
     if (post.isRead) {
       link.classList.add('link-secondary')
       link.classList.remove('fw-bold')
-    } else {
+    }
+    else {
       link.classList.add('fw-bold')
       link.classList.remove('link-secondary')
     }

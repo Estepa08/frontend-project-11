@@ -6,7 +6,7 @@ export const urlSchema = yup
   .url('errors.urlInvalid')
   .test('not-duplicate', 'errors.duplicate', function (url) {
     const feeds = this.options.context?.feeds || []
-    return !feeds.some((feed) => feed.url === url)
+    return !feeds.some(feed => feed.url === url)
   })
 
 export const validateUrl = (url, feeds) => {

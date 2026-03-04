@@ -27,11 +27,11 @@ class AppController extends Controller {
     this.formView = new FormView(document.getElementById('rss-form'))
     this.feedsView = new FeedsView(
       document.getElementById('feeds'),
-      document.getElementById('feed-template')
+      document.getElementById('feed-template'),
     )
     this.postsView = new PostsView(
       document.getElementById('posts-container'),
-      document.getElementById('post-template')
+      document.getElementById('post-template'),
     )
     this.messageView = new MessageView(document.getElementById('messages-container'))
 
@@ -85,7 +85,7 @@ class AppController extends Controller {
       this.isUpdating = true
       const feeds = this.feedsManager.getState().feeds
 
-      const promises = feeds.map((feed) => this.checkFeedUpdates(feed).catch(() => {}))
+      const promises = feeds.map(feed => this.checkFeedUpdates(feed).catch(() => {}))
 
       Promise.all(promises).finally(() => {
         this.isUpdating = false
@@ -98,15 +98,15 @@ class AppController extends Controller {
 
   checkFeedUpdates(feed) {
     return fetchRss(feed.url)
-      .then((xmlText) => parseRss(xmlText, feed.url))
+      .then(xmlText => parseRss(xmlText, feed.url))
       .then((data) => {
         const existingPosts = this.postsManager.getPostsByFeedUrl(feed.url)
         const newPosts = data.posts.filter(
-          (newPost) => !existingPosts.some((existing) => existing.title === newPost.title)
+          newPost => !existingPosts.some(existing => existing.title === newPost.title),
         )
 
         if (newPosts.length > 0) {
-          this.postsManager.addPosts(newPosts.map((post) => ({ ...post, feedUrl: feed.url })))
+          this.postsManager.addPosts(newPosts.map(post => ({ ...post, feedUrl: feed.url })))
 
           this.feedsManager.updateFeed(feed.id, {
             postCount: (feed.postCount || 0) + newPosts.length,
@@ -119,9 +119,11 @@ class AppController extends Controller {
         if (!this.lastProxyError || Date.now() - this.lastProxyError > 60000) {
           if (error.message === 'errors.proxyUnavailable') {
             this.messageView.show('errors.proxyUnavailable', 'warning')
-          } else if (error.message === 'errors.tooManyRequests') {
+          }
+          else if (error.message === 'errors.tooManyRequests') {
             this.messageView.show('errors.tooManyRequests', 'warning')
-          } else {
+          }
+          else {
             this.messageView.show(error.message || 'errors.network', 'danger')
           }
           this.lastProxyError = Date.now()
@@ -173,7 +175,8 @@ class AppController extends Controller {
         if (error.message?.startsWith('errors.')) {
           console.log('🔥 Показываем ошибку:', error.message)
           this.messageView.show(error.message, 'danger')
-        } else {
+        }
+        else {
           console.log('🔥 Показываем unknown')
           this.messageView.show('errors.unknown', 'danger')
         }

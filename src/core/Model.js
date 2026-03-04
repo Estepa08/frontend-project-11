@@ -19,7 +19,7 @@ export default class Model {
   }
 
   unsubscribe(callback) {
-    this.subscribers = this.subscribers.filter((cb) => cb !== callback)
+    this.subscribers = this.subscribers.filter(cb => cb !== callback)
   }
 
   setState(newState) {
@@ -30,7 +30,8 @@ export default class Model {
     this.subscribers.forEach((callback) => {
       try {
         callback(state)
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Error in subscriber:', error)
       }
     })

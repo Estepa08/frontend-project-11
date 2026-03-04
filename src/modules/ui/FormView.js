@@ -29,7 +29,7 @@ export default class FormView extends View {
       }
     })
 
-    this.container.addEventListener('submit', (e) => e.preventDefault())
+    this.container.addEventListener('submit', e => e.preventDefault())
 
     this.input.addEventListener('input', () => {
       if (this.hasError()) {

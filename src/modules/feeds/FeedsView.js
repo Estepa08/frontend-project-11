@@ -60,7 +60,7 @@ export default class FeedsView extends View {
 
       item.querySelector('.feed-description').textContent = truncate(
         feed.description,
-        MAX_DESCRIPTION_LENGTH
+        MAX_DESCRIPTION_LENGTH,
       )
       item.querySelector('.feed-date').textContent = feed.addedAt
       countEl.textContent = i18next.t('feeds.postsCount', { count })

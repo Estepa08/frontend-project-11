@@ -34,7 +34,8 @@ export default class View {
         this.container.innerHTML = ''
         const clone = this.template.content.cloneNode(true)
         this.container.appendChild(clone)
-      } else if (typeof this.template === 'function') {
+      }
+      else if (typeof this.template === 'function') {
         this.container.innerHTML = this.template(data)
       }
     }

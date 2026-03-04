@@ -12,28 +12,28 @@ export default class FeedsManager extends Model {
   }
 
   removeFeed(id) {
-    const feeds = this.state.feeds.filter((feed) => feed.id !== id)
+    const feeds = this.state.feeds.filter(feed => feed.id !== id)
     this.setState({ feeds })
   }
 
   getFeedById(id) {
-    return this.state.feeds.find((feed) => feed.id === id)
+    return this.state.feeds.find(feed => feed.id === id)
   }
 
   getFeedByUrl(url) {
-    return this.state.feeds.find((feed) => feed.url === url)
+    return this.state.feeds.find(feed => feed.url === url)
   }
 
   updateFeed(id, updatedData) {
-    const feeds = this.state.feeds.map((feed) =>
-      feed.id === id ? { ...feed, ...updatedData } : feed
+    const feeds = this.state.feeds.map(feed =>
+      feed.id === id ? { ...feed, ...updatedData } : feed,
     )
     this.setState({ feeds })
   }
 
   updatePostCount(feedId, count) {
-    const feeds = this.state.feeds.map((feed) =>
-      feed.id === feedId ? { ...feed, postCount: count } : feed
+    const feeds = this.state.feeds.map(feed =>
+      feed.id === feedId ? { ...feed, postCount: count } : feed,
     )
     this.setState({ feeds })
   }
