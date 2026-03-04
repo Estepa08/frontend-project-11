@@ -8,54 +8,41 @@ const apiClient = axios.create({
 });
 
 export const fetchRss = (url) => {
-    console.log('📡 [API] fetchRss вызван с URL:', url);
+    console.log('📡 [API] Запрос к прокси для:', url);
 
-    // ⭐️ ТОЛЬКО ПРОКСИ, БЕЗ МОКОВ
-    const proxyUrl = `${PROXY_URL}/get?disableCache=true&url=${encodeURIComponent(url)}`;
+    const proxyUrl = `${PROXY_URL}/get?url=${encodeURIComponent(url)}&disableCache=true`;
     console.log('🔄 [API] Прокси URL:', proxyUrl);
 
     return apiClient
         .get(proxyUrl)
         .then((response) => {
-            console.log('✅ [API] Ответ от прокси получен. Статус:', response.status);
-            console.log('✅ [API] Тип ответа:', typeof response.data);
-            console.log('✅ [API] Наличие data.contents:', !!response.data?.contents);
+            console.log('✅ [API] Статус ответа:', response.status);
 
-            // В /get данные приходят в response.data.contents
-            if (response.data && response.data.contents) {
-                console.log(
-                    '✅ [API] Успешно извлекли contents, длина:',
-                    response.data.contents.length
-                );
-                return response.data.contents;
+            if (response.status !== 200) {
+                throw new Error('errors.network');
             }
 
-            console.error('❌ [API] Нет поля contents в ответе');
+            // Данные могут быть в разных форматах
+            const data = response.data;
+            console.log('📦 [API] Тип ответа:', typeof data);
+
+            // Если пришла строка - это уже XML
+            if (typeof data === 'string') {
+                console.log('✅ [API] Получили XML строку, длина:', data.length);
+                return data;
+            }
+
+            // Если пришёл объект - ищем contents
+            if (data && data.contents) {
+                console.log('✅ [API] Получили JSON с contents, длина:', data.contents.length);
+                return data.contents;
+            }
+
+            console.error('❌ [API] Неожиданный формат ответа:', data);
             throw new Error('errors.network');
         })
         .catch((error) => {
-            console.error('❌ [API] ====== ДЕТАЛИ ОШИБКИ ======');
-            console.error('❌ [API] URL запроса:', url);
-            console.error('❌ [API] Proxy URL:', proxyUrl);
-            console.error('❌ [API] Error code:', error.code);
-            console.error('❌ [API] Error message:', error.message);
-
-            if (error.response) {
-                console.error('❌ [API] Response status:', error.response.status);
-                console.error('❌ [API] Response data:', error.response.data);
-            }
-
-            console.error('❌ [API] ============================');
-
-            if (error.code === 'ECONNABORTED') {
-                throw new Error('errors.timeout');
-            }
-            if (error.response?.status === 502 || error.response?.status === 503) {
-                throw new Error('errors.proxyUnavailable');
-            }
-            if (error.response?.status === 429) {
-                throw new Error('errors.tooManyRequests');
-            }
+            console.error('❌ [API] Ошибка:', error.message);
             throw new Error('errors.network');
         });
 };
