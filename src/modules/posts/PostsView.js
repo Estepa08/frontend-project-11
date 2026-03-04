@@ -70,6 +70,8 @@ export default class PostsView extends View {
     }
 
     renderPost(post) {
+        console.log('📝 Создаём пост с заголовком:', post.title);
+        console.log('📝 Класс:', post.isRead ? 'fw-normal' : 'fw-bold');
         const clone = this.postTemplate.content.cloneNode(true);
 
         const link = clone.querySelector('a');
