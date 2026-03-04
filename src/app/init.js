@@ -154,16 +154,16 @@ class AppController extends Controller {
                 this.formView.focus();
             })
             .catch((error) => {
+                console.log('🔥 ОШИБКА В HANDLE SUBMIT');
+                console.log('🔥 error:', error);
+                console.log('🔥 error.message:', error.message);
+                console.log('🔥 messageView существует:', !!this.messageView);
+
                 if (error.message?.startsWith('errors.')) {
-                    if (
-                        ['errors.urlRequired', 'errors.urlInvalid', 'errors.duplicate'].includes(
-                            error.message
-                        )
-                    ) {
-                        this.formView.showError();
-                    }
+                    console.log('🔥 Показываем сообщение:', error.message);
                     this.messageView.show(error.message, 'danger');
                 } else {
+                    console.log('🔥 Показываем unknown');
                     this.messageView.show('errors.unknown', 'danger');
                 }
             })
@@ -191,6 +191,7 @@ class AppController extends Controller {
 
 export const initApp = () => {
     document.addEventListener('DOMContentLoaded', () => {
-        new AppController();
+        const app = new AppController(); // сохраняем в переменную
+        console.log('App initialized', app); // используем
     });
 };
