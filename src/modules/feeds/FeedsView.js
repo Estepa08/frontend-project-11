@@ -24,24 +24,16 @@ export default class FeedsView extends View {
     }
 
     render(feeds) {
-        console.log('📌 Рендерим фид с заголовком:', feed.title);
+        console.log('📌 Рендерим фиды, количество:', feeds?.length);
         this.clear();
 
-        const existingHeader = this.container.parentNode.querySelector('h2');
-        if (existingHeader) {
-            existingHeader.remove();
-        }
-
         if (!feeds || feeds.length === 0) {
-            return;
+            return; // Заголовок уже есть в HTML, просто ничего не рендерим
         }
-
-        const header = document.createElement('h2');
-        header.setAttribute('data-i18n', 'sections.feeds');
-        header.textContent = i18next.t('sections.feeds');
-        this.container.parentNode.insertBefore(header, this.container);
 
         feeds.forEach((feed) => {
+            console.log('📌 Рендерим фид:', feed.title);
+
             const clone = this.template.content.cloneNode(true);
             const item = clone.querySelector('a');
             const countEl = item.querySelector('.feed-posts-count');
@@ -49,20 +41,21 @@ export default class FeedsView extends View {
 
             item.dataset.id = feed.id;
 
-            // ⭐️ ЗАМЕНЯЕМ span.feed-title на h3
+            // Удаляем старый span.feed-title если есть
             const oldTitle = item.querySelector('.feed-title');
+            if (oldTitle) {
+                oldTitle.remove();
+            }
+
+            // Создаём h3 для заголовка
             const titleEl = document.createElement('h3');
             titleEl.className = 'feed-title h5 mb-1';
             titleEl.textContent = feed.title || feed.url;
 
-            if (oldTitle) {
-                oldTitle.replaceWith(titleEl);
-            } else {
-                // Если нет старого заголовка, добавляем в нужное место
-                const container = item.querySelector('.d-flex.align-items-center.mb-1');
-                if (container) {
-                    container.appendChild(titleEl);
-                }
+            // Вставляем в нужное место
+            const container = item.querySelector('.d-flex.align-items-center.mb-1');
+            if (container) {
+                container.appendChild(titleEl);
             }
 
             item.querySelector('.feed-description').textContent = truncate(

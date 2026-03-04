@@ -44,20 +44,12 @@ export default class PostsView extends View {
     render(posts) {
         this.clear();
 
-        const existingHeader = this.container.parentNode.querySelector('h2');
-        if (existingHeader) {
-            existingHeader.remove();
-        }
+        // Убираем удаление и создание заголовка - он уже есть в HTML
 
         if (!posts || posts.length === 0) {
             this.hide();
             return;
         }
-
-        const header = document.createElement('h2');
-        header.setAttribute('data-i18n', 'sections.posts');
-        header.textContent = i18next.t('sections.posts');
-        this.container.parentNode.insertBefore(header, this.container);
 
         this.show();
         this.renderPosts(posts);
@@ -71,8 +63,8 @@ export default class PostsView extends View {
 
     renderPost(post) {
         console.log('📝 Рендерим пост с заголовком:', post.title);
-        console.log('📝 Создаём пост с заголовком:', post.title);
         console.log('📝 Класс:', post.isRead ? 'fw-normal' : 'fw-bold');
+
         const clone = this.postTemplate.content.cloneNode(true);
 
         const link = clone.querySelector('a');
