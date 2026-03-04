@@ -4,8 +4,11 @@ import prettier from 'eslint-config-prettier'
 import prettierPlugin from 'eslint-plugin-prettier'
 
 export default [
+  // 👇 ИГНОРИРУЕМ СБОРКУ
+  {
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**', 'public/**'],
+  },
   js.configs.recommended,
-  prettier, // отключает правила ESLint, конфликтующие с Prettier
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -42,4 +45,5 @@ export default [
       'no-console': 'off',
     },
   },
+  prettier,
 ]
