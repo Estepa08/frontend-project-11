@@ -132,23 +132,35 @@ class AppController extends Controller {
     }
 
     handleSubmit(url) {
+        console.log('🔥 handleSubmit START, url:', url);
+        console.log('🔥 formView exists:', !!this.formView);
+        console.log('🔥 messageView exists:', !!this.messageView);
+
         this.formView.clearError();
         this.formView.setLoading(true);
 
         if (!url || url.trim() === '') {
+            console.log('🔥 URL пустой');
             this.formView.setLoading(false);
             this.messageView.show('errors.urlRequired', 'danger');
             this.formView.showError();
             return;
         }
 
+        console.log('🔥 Валидация...');
         validateUrl(url, this.feedsManager.getState().feeds)
-            .then(() => fetchRss(url))
-            .then((xmlText) => parseRss(xmlText, url))
+            .then(() => {
+                console.log('🔥 Валидация прошла');
+                return fetchRss(url);
+            })
+            .then((xmlText) => {
+                console.log('🔥 RSS загружен, длина:', xmlText.length);
+                return parseRss(xmlText, url);
+            })
             .then(({ feed, posts }) => {
+                console.log('🔥 RSS распарсен, постов:', posts.length);
                 this.feedsManager.addFeed(feed);
                 this.postsManager.addPosts(posts);
-
                 this.messageView.show('messages.feedAdded', 'success');
                 this.formView.clear();
                 this.formView.focus();
@@ -157,10 +169,9 @@ class AppController extends Controller {
                 console.log('🔥 ОШИБКА В HANDLE SUBMIT');
                 console.log('🔥 error:', error);
                 console.log('🔥 error.message:', error.message);
-                console.log('🔥 messageView существует:', !!this.messageView);
 
                 if (error.message?.startsWith('errors.')) {
-                    console.log('🔥 Показываем сообщение:', error.message);
+                    console.log('🔥 Показываем ошибку:', error.message);
                     this.messageView.show(error.message, 'danger');
                 } else {
                     console.log('🔥 Показываем unknown');
@@ -168,6 +179,7 @@ class AppController extends Controller {
                 }
             })
             .finally(() => {
+                console.log('🔥 finally, убираем загрузку');
                 this.formView.setLoading(false);
             });
     }
