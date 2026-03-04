@@ -61,41 +61,25 @@ export default class PostsView extends View {
         sortedPosts.forEach((post) => this.renderPost(post));
     }
 
-    renderPost(post) {
-        console.log('📝 Рендерим пост с заголовком:', post.title);
-        console.log('📝 Класс:', post.isRead ? 'fw-normal' : 'fw-bold');
-
+    enderPost(post) {
         const clone = this.postTemplate.content.cloneNode(true);
+        const li = clone.querySelector('li');
 
-        const link = clone.querySelector('a');
+        const link = li.querySelector('a');
         link.href = post.link;
-        link.setAttribute('target', '_blank');
-        link.setAttribute('rel', 'noopener noreferrer');
         link.classList.add(post.isRead ? 'fw-normal' : 'fw-bold');
-
-        const titleEl = link.querySelector('.post-title');
-        if (titleEl) titleEl.textContent = post.title;
-
-        const dateEl = link.querySelector('.post-date');
-        if (dateEl) dateEl.textContent = formatDate(post.pubDate);
+        link.querySelector('.post-title').textContent = post.title;
+        link.querySelector('.post-date').textContent = formatDate(post.pubDate);
 
         const descEl = link.querySelector('.post-description');
         if (descEl && post.description) {
             descEl.textContent = truncate(post.description, MAX_POST_DESCRIPTION_LENGTH);
         }
 
-        const container = document.createElement('div');
-        container.className = 'd-flex align-items-center mb-2';
-
-        container.appendChild(link);
-
-        const previewBtn = document.createElement('button');
-        previewBtn.className = 'btn btn-sm btn-outline-primary ms-2 preview-btn';
-        previewBtn.textContent = i18next.t('modal.preview');
+        const previewBtn = li.querySelector('.preview-btn');
         previewBtn.dataset.postId = post.id;
-        container.appendChild(previewBtn);
 
-        this.container.appendChild(container);
+        this.container.appendChild(li);
     }
 
     showPreview(post) {
