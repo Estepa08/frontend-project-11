@@ -24,6 +24,7 @@ export default class FeedsView extends View {
     }
 
     render(feeds) {
+        console.log('📌 Рендерим фид с заголовком:', feed.title);
         this.clear();
 
         const existingHeader = this.container.parentNode.querySelector('h2');
