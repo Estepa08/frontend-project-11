@@ -72,7 +72,13 @@ export default class PostsView extends View {
         link.href = post.link;
         link.setAttribute('target', '_blank');
         link.setAttribute('rel', 'noopener noreferrer');
-        link.classList.add(post.isRead ? 'fw-normal' : 'fw-bold');
+        if (post.isRead) {
+            link.classList.add('link-secondary');
+            link.classList.remove('fw-bold');
+        } else {
+            link.classList.add('fw-bold');
+            link.classList.remove('link-secondary');
+        }
 
         const titleEl = link.querySelector('.post-title');
         if (titleEl) titleEl.textContent = post.title;
