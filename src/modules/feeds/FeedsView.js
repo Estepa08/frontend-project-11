@@ -47,7 +47,23 @@ export default class FeedsView extends View {
             const count = feed.postCount || 0;
 
             item.dataset.id = feed.id;
-            item.querySelector('.feed-title').textContent = feed.title || feed.url;
+
+            // ⭐️ ЗАМЕНЯЕМ span.feed-title на h3
+            const oldTitle = item.querySelector('.feed-title');
+            const titleEl = document.createElement('h3');
+            titleEl.className = 'feed-title h5 mb-1';
+            titleEl.textContent = feed.title || feed.url;
+
+            if (oldTitle) {
+                oldTitle.replaceWith(titleEl);
+            } else {
+                // Если нет старого заголовка, добавляем в нужное место
+                const container = item.querySelector('.d-flex.align-items-center.mb-1');
+                if (container) {
+                    container.appendChild(titleEl);
+                }
+            }
+
             item.querySelector('.feed-description').textContent = truncate(
                 feed.description,
                 MAX_DESCRIPTION_LENGTH
